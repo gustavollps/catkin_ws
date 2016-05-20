@@ -1,0 +1,6 @@
+<!--xml-->
+<launch>
+  <node name="serial_arduino" pkg="serial_node" type="serial_node"/>
+  <node name="serial_monitor" pkg="serial_control" type="serial_control"/>		 
+  <node name="serial_plot" pkg="rqt_plot" type="rqt_plot"/>
+</launch>

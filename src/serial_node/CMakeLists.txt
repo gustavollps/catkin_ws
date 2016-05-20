@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(serial_node)
+
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  message_generation
+)
+
+add_message_files(
+  FILES 
+  Angle.msg
+  PIDparams.msg
+  In_out.msg
+)
+
+add_service_files(
+  FILES
+  ResetAngle.srv
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
+
+
+catkin_package()
+
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
+add_executable(serial_node src/serial_node.cpp src/serial.cpp)
+target_link_libraries(serial_node ${catkin_LIBRARIES})
+add_dependencies(serial_node serial_node_generate_messages_cpp)
+
