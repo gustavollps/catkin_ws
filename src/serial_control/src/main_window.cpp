@@ -180,7 +180,7 @@ void serial_control::MainWindow::on_send_clicked()
     qnode.clicked = true;
     qnode.kp = ui.kp->value();
     qnode.ki = ui.ki->value();
-    qnode.kd = ui.kd->value()*1000.0;
+    qnode.kd = ui.kd->value();
     qnode.setpoint = ui.setpoint->value();
     qnode.min = ui.pid_min->value();
     qnode.max = ui.pid_max->value();
