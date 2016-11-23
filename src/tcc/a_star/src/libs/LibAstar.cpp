@@ -59,7 +59,7 @@ std::string LibAstar::pathFinder()
     map[30][i]=1;
   }
   map[98][99]=1;
-  //map[99][98]=1;
+  map[99][98]=1;
   map[98][98]=1;
 
   #ifdef DEBUG
