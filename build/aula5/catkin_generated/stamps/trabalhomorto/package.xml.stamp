@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+  <name>trabalhomorto</name>
+  <version>1.0.0</version>
+  <description>The trabalhomorto package</description>
+
+  <author email="email@email.email">trabalhomorto</author>
+  <maintainer email="email@email.email">trabalhomorto</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>  
+  <build_depend>roscpp</build_depend>  
+  <run_depend>roscpp</run_depend>
+</package>

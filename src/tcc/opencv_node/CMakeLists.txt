@@ -21,25 +21,13 @@ generate_messages(
    std_msgs
 )
 
-catkin_package(
-)
- 
+catkin_package() 
 
 include_directories(
     ${catkin_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
 )
  
- 
-
 add_executable(opencv_node src/opencv_node.cpp src/CamVision.cpp)
- 
-
-
-target_link_libraries(opencv_node
-    ${catkin_LIBRARIES}
-    ${OpenCV_LIBRARIES}
-)
-
-
-add_dependencies(opencv_node opencv_node_generate_messages_cpp)
+target_link_libraries(opencv_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(opencv_node tcc_msgs opencv_node_generate_messages_cpp)

@@ -27,5 +27,5 @@ set(CPP_FILES
 
 
 add_executable(a_star src/a_star.cpp ${CPP_FILES})
-add_dependencies(a_star ${catkin_EXPORTED_TARGETS})
-target_link_libraries(a_star  ${catkin_LIBRARIES})
+add_dependencies(a_star tcc_msgs ${catkin_EXPORTED_TARGETS})
+target_link_libraries(a_star ${catkin_LIBRARIES})

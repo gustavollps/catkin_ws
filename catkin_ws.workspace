@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<Workspace>
+    <WatchDirectories>
+        <Directory>src</Directory>
+    </WatchDirectories>
+    <IncludePaths>
+        <Directory>/home/tony/catkin_ws/devel/include</Directory>
+        <Directory>/home/tony/catkin_ws/a_star_test_old/include</Directory>
+        <Directory>/home/tony/catkin_ws/build/serial_control/include</Directory>
+        <Directory>/home/tony/catkin_ws/build/serial_control/CMakeFiles/serial_control.dir/include</Directory>
+        <Directory>/home/tony/catkin_ws/src/serial_control/include</Directory>
+        <Directory>/home/tony/catkin_ws/src/a_star_test/include</Directory>
+        <Directory>/home/tony/catkin_ws/src/tcc/opencv_node/include</Directory>
+        <Directory>/home/tony/catkin_ws/src/serial_node/include</Directory>
+        <Directory>/usr/src/gtest</Directory>
+        <Directory>/usr/src/gtest/include</Directory>
+        <Directory>/opt/ros/indigo/include</Directory>
+        <Directory>/usr/include/opencv</Directory>
+        <Directory>/usr/local/Aria/include</Directory>
+    </IncludePaths>
+</Workspace>

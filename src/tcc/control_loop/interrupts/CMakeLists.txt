@@ -21,4 +21,4 @@ include_directories(
 
 add_executable(interrupts src/interrupts.cpp)
 add_dependencies(interrupts tcc_msgs ${catkin_EXPORTED_TARGETS})
-target_link_libraries(interrupts  ${catkin_LIBRARIES})
+target_link_libraries(interrupts ${catkin_LIBRARIES})

@@ -1,0 +1,8 @@
+prefix=/home/tony/catkin_ws/install
+
+Name: a_star
+Description: Description of a_star
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tony/catkin_ws/install/lib 
+Requires: 

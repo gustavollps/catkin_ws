@@ -1,0 +1,8 @@
+prefix=/home/tony/catkin_ws/devel
+
+Name: aula5
+Description: Description of aula5
+Version: 1.0.0
+Cflags: -I/home/tony/catkin_ws/src/aula5/include
+Libs: -L/home/tony/catkin_ws/devel/lib 
+Requires: roscpp

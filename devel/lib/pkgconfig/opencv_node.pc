@@ -1,0 +1,8 @@
+prefix=/home/tony/catkin_ws/devel
+
+Name: opencv_node
+Description: Description of opencv_node
+Version: 0.0.0
+Cflags: -I/home/tony/catkin_ws/devel/include
+Libs: -L/home/tony/catkin_ws/devel/lib 
+Requires: 

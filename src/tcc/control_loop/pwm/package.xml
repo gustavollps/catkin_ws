@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
   <name>pwm</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>The pwm package</description>
 
-  <maintainer email="tony@todo.todo">tony</maintainer>
+  <maintainer email="gustavollps@gmail.com">Gustavo Leite Lopes</maintainer>
 
   <license>TODO</license>
 
@@ -12,10 +12,10 @@
 
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
+  <build_depend>tcc_msgs</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>std_msgs</run_depend>
-  <run_depend>message_generation</run_depend>
+  <run_depend>tcc_msgs</run_depend>
 
 </package>
