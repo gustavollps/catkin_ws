@@ -1,8 +1,0 @@
-prefix=/home/tony/catkin_ws/devel
-
-Name: dsadsa
-Description: Description of dsadsa
-Version: 0.1.0
-Cflags: 
-Libs: -L/home/tony/catkin_ws/devel/lib 
-Requires: 

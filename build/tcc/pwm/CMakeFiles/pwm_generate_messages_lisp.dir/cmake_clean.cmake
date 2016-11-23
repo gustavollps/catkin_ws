@@ -1,9 +1,0 @@
-FILE(REMOVE_RECURSE
-  "CMakeFiles/pwm_generate_messages_lisp"
-  "/home/tony/catkin_ws/devel/share/common-lisp/ros/pwm/msg/cmd_vel_msg.lisp"
-)
-
-# Per-language clean rules from dependency scanning.
-FOREACH(lang)
-  INCLUDE(CMakeFiles/pwm_generate_messages_lisp.dir/cmake_clean_${lang}.cmake OPTIONAL)
-ENDFOREACH(lang)

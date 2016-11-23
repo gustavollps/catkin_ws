@@ -1,8 +1,0 @@
-prefix=/home/tony/catkin_ws/devel
-
-Name: control_loop
-Description: Description of control_loop
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/tony/catkin_ws/devel/lib 
-Requires: 

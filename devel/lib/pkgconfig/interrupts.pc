@@ -1,8 +1,0 @@
-prefix=/home/tony/catkin_ws/devel
-
-Name: interrupts
-Description: Description of interrupts
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/tony/catkin_ws/devel/lib 
-Requires: 

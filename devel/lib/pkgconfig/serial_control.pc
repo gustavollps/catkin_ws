@@ -1,8 +1,0 @@
-prefix=/home/tony/catkin_ws/devel
-
-Name: serial_control
-Description: Description of serial_control
-Version: 0.1.0
-Cflags: 
-Libs: -L/home/tony/catkin_ws/devel/lib 
-Requires: 

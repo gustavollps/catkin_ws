@@ -1,8 +1,0 @@
-prefix=/home/tony/catkin_ws/devel
-
-Name: a_star_test
-Description: Description of a_star_test
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/tony/catkin_ws/devel/lib 
-Requires: 

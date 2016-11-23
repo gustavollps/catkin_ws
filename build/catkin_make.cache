@@ -1,2 +1,0 @@
-rosaria:serial_control:serial_node:tcc/a_star:tcc/control_loop/control_loop:tcc/control_loop/interrupts:tcc/control_loop/pwm:tcc/opencv_node:tcc/tcc_msgs:teste:trabalho_final
--DCATKIN_DEVEL_PREFIX=/home/tony/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/tony/catkin_ws/install -G Unix Makefiles
