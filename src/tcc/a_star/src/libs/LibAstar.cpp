@@ -324,10 +324,11 @@ std::string LibAstar::pathFinder()
       #endif
     }
     //printMap();
-
-    //std::cout << std::endl;
-    //std::cout << std::endl << route << std::endl << std::endl;
-    //getchar();
+    #ifdef DEBUG2
+    std::cout << std::endl;
+    std::cout << std::endl << route << std::endl << std::endl;
+    getchar();
+    #endif
     return route;
   }
 
