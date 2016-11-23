@@ -11,7 +11,7 @@
 #define CURSE_LENGHT (MATRIX_WIDTH+MATRIX_HEIGHT)/2*1
 
 //#define DEBUG
-//#define DEBUG2
+#define DEBUG2
 
 class LibAstar
 {
