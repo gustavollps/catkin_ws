@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   roscpp
   std_msgs
+  tcc_msgs
   message_generation
 )
  

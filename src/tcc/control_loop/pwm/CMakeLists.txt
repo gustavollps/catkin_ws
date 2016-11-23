@@ -4,7 +4,7 @@ project(pwm)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
-  #tcc_msgs
+  tcc_msgs
 )
 
 catkin_package()

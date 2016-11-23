@@ -4,6 +4,7 @@ project(interrupts)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  tcc_msgs
 )
 
 
