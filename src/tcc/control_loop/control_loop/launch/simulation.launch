@@ -1,0 +1,6 @@
+<!--xml-->
+<launch>
+  <node name="PWM" pkg="pwm" type="pwm"/>
+  <node name="Interrupts" pkg="interrupts" type="interrupts"/>		 
+  <node name="AStar" pkg="a_star" type="a_star"/>
+</launch>

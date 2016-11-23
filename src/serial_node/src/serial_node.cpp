@@ -88,8 +88,7 @@ int main(int argc, char *argv[])
   ros::Rate loop_rate(100);
   ros::ServiceServer service = n.advertiseService("ResetAngle", reset_angle);
   
-  fd = Serial.begin();
-  
+  fd = Serial.begin();  
   int errors = 0;
   char buf [11];
   char flush[15];

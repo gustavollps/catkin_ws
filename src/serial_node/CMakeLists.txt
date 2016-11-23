@@ -32,6 +32,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+#add_dependencies(serial_node ${catkin_EXPORTED_TARGETS})
 add_executable(serial_node src/serial_node.cpp src/serial.cpp)
 target_link_libraries(serial_node ${catkin_LIBRARIES})
 add_dependencies(serial_node serial_node_generate_messages_cpp)

@@ -47,7 +47,7 @@ file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINK
 # Binaries
 ##############################################################################
 
-#add_executable(serial_control ${QT_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-#target_link_libraries(serial_control ${QT_LIBRARIES} ${catkin_LIBRARIES})
-#install(TARGETS serial_control RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+add_executable(serial_control ${QT_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+target_link_libraries(serial_control ${QT_LIBRARIES} ${catkin_LIBRARIES})
+install(TARGETS serial_control RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
