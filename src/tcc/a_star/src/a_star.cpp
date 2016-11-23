@@ -2,7 +2,7 @@
 #include "std_msgs/String.h"
 #include "tcc_msgs/location_goal.h"
 
-Point start(0,0),goal(9,9);
+Point start(0,0),goal(99,99);
 LibAstar astar_router(goal,start);
 
 void goalCallback(tcc_msgs::location_goal msg){

@@ -6,8 +6,8 @@
 #include <queue>
 #include <stdio.h>
 
-#define MATRIX_HEIGHT 10
-#define MATRIX_WIDTH 10
+#define MATRIX_HEIGHT 100
+#define MATRIX_WIDTH 100
 #define CURSE_LENGHT (MATRIX_WIDTH+MATRIX_HEIGHT)/2*1
 
 //#define DEBUG
