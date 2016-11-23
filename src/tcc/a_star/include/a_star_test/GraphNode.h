@@ -39,8 +39,6 @@ class GraphNode{
 
 };
 
-
-
 unsigned int abs(unsigned int a);
 
 int abs(int a);

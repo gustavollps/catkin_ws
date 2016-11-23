@@ -2,22 +2,32 @@
 
 LibAstar::LibAstar(Point &goal, Point &start):goal_{goal}, start_{start}{}
 
-std::string LibAstar::pathFinder()
+LibAstar::~LibAstar()
 {
-  static GraphNode *node = new GraphNode(MANHATTAN, goal_,start_,start_,0);
+  clearDirMap();
+  clearLists();
+  clearMap();
+}
+
+std::string LibAstar::pathFinder()
+{  
+  GraphNode *node = new GraphNode(MANHATTAN, goal_,start_,start_,0);
 
   node->G_ = 0;
   node->F_ = node->H_;
+
+  //std::cout<<"INICIAL"<<node[0]<<std::endl;
+
+  clearDirMap();
+  clearLists();
+  clearMap();
 
   #ifdef DEBUG2
   ros::Time time = ros::Time::now();
   #endif
   static Point actual_position = start_;
-  static GraphNode *temp_node;
+  GraphNode *temp_node;
 
-  clearLists();  
-  clearMap();
-  clearDirMap();
   while(!open_list[0].empty()){
     open_list[0].pop();
   }
@@ -26,8 +36,7 @@ std::string LibAstar::pathFinder()
 
   //map[0][2]=1;
   map[3][0]=1;
-  map[3][1]=1;
-  map[3][1]=1;
+  map[3][1]=1;  
 
 
   map[1][2]=1;
@@ -37,7 +46,7 @@ std::string LibAstar::pathFinder()
   map[5][2]=1;
   map[3][2]=1;
 
-  map[0][6]=1;
+  //map[0][6]=1;
   map[1][6]=1;
   map[2][6]=1;
   map[3][6]=1;
@@ -47,20 +56,21 @@ std::string LibAstar::pathFinder()
   map[7][6]=1;
   map[8][6]=1;
   map[9][6]=1;
-  map[10][6]=1;
-  map[11][6]=1;
-  for(int i=0;i<MATRIX_HEIGHT-1;i++){
-    map[i][40]=1;
-  }
-  for(int i=1;i<MATRIX_WIDTH-4;i++){
-    map[40][i]=1;
-  }
-  for(int i=0;i<39;i++){
-    map[30][i]=1;
-  }
-  map[98][99]=1;
-  map[99][98]=1;
-  map[98][98]=1;
+//  map[10][6]=1;
+//  map[11][6]=1;
+//
+//  for(int i=0;i<MATRIX_HEIGHT-1;i++){
+//    map[i][40]=1;
+//  }
+//  for(int i=1;i<MATRIX_WIDTH-4;i++){
+//    map[40][i]=1;
+//  }
+//  for(int i=0;i<39;i++){
+//    map[30][i]=1;
+//  }
+//  map[98][99]=1;
+//  map[99][98]=1;
+//  map[98][98]=1;
 
   #ifdef DEBUG
   printMap();
@@ -69,7 +79,7 @@ std::string LibAstar::pathFinder()
   opened_list[start_.x_][start_.y_] = node->F_;
 
   while(!open_list[0].empty() && !(node->position_==goal_))
-  {
+  {    
     //std::cout << open_list[0].size() << std::endl;
 
     #ifdef DEBUG
@@ -77,8 +87,8 @@ std::string LibAstar::pathFinder()
     std::cout << "Goal: " << goal_ << std::endl;
     #endif
     //debug();
-
-    open_list[0].pop();
+    //std::cout << "New node: " << node[0] << std::endl;
+    open_list[0].pop();   
 
     if((closed_list[node->position_.x_][node->position_.y_] > node->F_ ||
        closed_list[node->position_.x_][node->position_.y_] == 0) &&
@@ -86,14 +96,17 @@ std::string LibAstar::pathFinder()
     {
       closed_list[node->position_.x_][node->position_.y_] = node->F_;
       //opened_list[node->position_.x_][node->position_.y_] = node->F_;
+      //std::cout << "if" <<std::endl;
     }
     else if(opened_list[node->position_.x_][node->position_.y_] != 0)
     {
       closed_list[node->position_.x_][node->position_.y_] = opened_list[node->position_.x_][node->position_.y_];
       node->F_ = opened_list[node->position_.x_][node->position_.y_];
       node->G_ = node->F_-node->H_;
+      //std::cout << "else" <<std::endl;
     }
 
+    //std::cout << "while2" <<std::endl;
     //verifying neighbors
     for(int i = -1; i<2;i++)
     {
@@ -112,7 +125,7 @@ std::string LibAstar::pathFinder()
           {
             //child node
             GraphNode *temp_node = new GraphNode(MANHATTAN,goal_,actual_position,node->position_,node->G_);
-
+            //std::cout<<"temp"<<temp_node[0]<<std::endl;
             #ifdef DEBUG
             std::cout << "Neighbors search: " << temp_node[0] << std::endl;
             std::cout << "Father: " << node[0] << std::endl;
@@ -163,7 +176,7 @@ std::string LibAstar::pathFinder()
 
               opened_list[actual_position.x_][actual_position.y_] = temp_node->F_;                            
 
-              delete temp_node;
+              //delete temp_node;
 
               dir_map[actual_position.x_][actual_position.y_] = getDir(i,j);
 
@@ -185,9 +198,11 @@ std::string LibAstar::pathFinder()
 
               open_list[0].push(*temp_node);
 
-              delete temp_node;
+              //delete temp_node;
 
             }
+
+            delete temp_node;
 
           }
 
@@ -221,7 +236,7 @@ std::string LibAstar::pathFinder()
 
     Point temp_point = node->position_;
     delete node;
-    GraphNode *node = new GraphNode(MANHATTAN,
+    node = new GraphNode(MANHATTAN,
                                     goal_,
                                     open_list[0].top().position_,
                                     open_list[0].top().father_,
@@ -233,8 +248,12 @@ std::string LibAstar::pathFinder()
     #endif
   }
 
-  delete temp_node;
-  delete node;
+  if(temp_node)
+    delete temp_node;
+
+
+  if(node)
+    delete node;
 
   #ifdef DEBUG2
   ros::Duration dtime = ros::Time::now()-time;
@@ -251,7 +270,7 @@ std::string LibAstar::pathFinder()
     #ifdef DEBUG2
     std::cout << "Rota não encontrada" << std::endl;    
     getchar();
-    #endif
+    #endif    
     return "";
   }
   else

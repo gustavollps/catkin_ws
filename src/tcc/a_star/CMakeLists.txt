@@ -18,12 +18,14 @@ set(H_FILES
     include/a_star_test/LibAstar.h
     include/a_star_test/Point.h
     include/a_star_test/GraphNode.h
+    include/a_star_test/AStarNode.h
     )
 
 set(CPP_FILES
     src/libs/LibAstar.cpp
     src/libs/Point.cpp
     src/libs/GraphNode.cpp
+    src/libs/AStarNode.cpp
     )
 
 
