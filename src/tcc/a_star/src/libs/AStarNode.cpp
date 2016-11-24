@@ -32,8 +32,7 @@ void AStarNode::spin() const
 }
 
 void AStarNode::timerCallback(const ros::TimerEvent &event)
-{
-  std::cout <<"Timer" << std::endl;
+{  
   ROS_INFO("Running pathFinder");
 
   Point start(start_->x_,start_->y_);

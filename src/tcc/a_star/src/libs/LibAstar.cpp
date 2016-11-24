@@ -14,9 +14,7 @@ std::string LibAstar::pathFinder()
   GraphNode *node = new GraphNode(MANHATTAN, goal_,start_,start_,0);
 
   node->G_ = 0;
-  node->F_ = node->H_;
-
-  //std::cout<<"INICIAL"<<node[0]<<std::endl;
+  node->F_ = node->H_; 
 
   clearDirMap();
   clearLists();
@@ -79,15 +77,13 @@ std::string LibAstar::pathFinder()
   opened_list[start_.x_][start_.y_] = node->F_;
 
   while(!open_list[0].empty() && !(node->position_==goal_))
-  {    
-    //std::cout << open_list[0].size() << std::endl;
+  {      
 
     #ifdef DEBUG
     std::cout << "New node: " << node[0] << std::endl;
     std::cout << "Goal: " << goal_ << std::endl;
     #endif
-    //debug();
-    //std::cout << "New node: " << node[0] << std::endl;
+    //debug();    
     open_list[0].pop();   
 
     if((closed_list[node->position_.x_][node->position_.y_] > node->F_ ||
@@ -95,26 +91,21 @@ std::string LibAstar::pathFinder()
        (opened_list[node->position_.x_][node->position_.y_] >= node->F_))
     {
       closed_list[node->position_.x_][node->position_.y_] = node->F_;
-      //opened_list[node->position_.x_][node->position_.y_] = node->F_;
-      //std::cout << "if" <<std::endl;
+      //opened_list[node->position_.x_][node->position_.y_] = node->F_;      
     }
     else if(opened_list[node->position_.x_][node->position_.y_] != 0)
     {
       closed_list[node->position_.x_][node->position_.y_] = opened_list[node->position_.x_][node->position_.y_];
       node->F_ = opened_list[node->position_.x_][node->position_.y_];
-      node->G_ = node->F_-node->H_;
-      //std::cout << "else" <<std::endl;
+      node->G_ = node->F_-node->H_;      
     }
 
-    //std::cout << "while2" <<std::endl;
     //verifying neighbors
     for(int i = -1; i<2;i++)
     {
       for(int j = -1; j<2;j++)
       {
-        Point actual_position(node->position_.x_+i,node->position_.y_+j);
-        //std::cout << "Search position: " << node[0].position_ << std::endl;
-
+        Point actual_position(node->position_.x_+i,node->position_.y_+j);        
 
         //node validation for verification of H and G
         if(validPoint(actual_position))
@@ -125,7 +116,7 @@ std::string LibAstar::pathFinder()
           {
             //child node
             GraphNode *temp_node = new GraphNode(MANHATTAN,goal_,actual_position,node->position_,node->G_);
-            //std::cout<<"temp"<<temp_node[0]<<std::endl;
+
             #ifdef DEBUG
             std::cout << "Neighbors search: " << temp_node[0] << std::endl;
             std::cout << "Father: " << node[0] << std::endl;
@@ -176,7 +167,6 @@ std::string LibAstar::pathFinder()
 
               opened_list[actual_position.x_][actual_position.y_] = temp_node->F_;                            
 
-              //delete temp_node;
 
               dir_map[actual_position.x_][actual_position.y_] = getDir(i,j);
 
@@ -198,7 +188,6 @@ std::string LibAstar::pathFinder()
 
               open_list[0].push(*temp_node);
 
-              //delete temp_node;
 
             }
 
@@ -248,12 +237,6 @@ std::string LibAstar::pathFinder()
     #endif
   }
 
-  if(temp_node)
-    delete temp_node;
-
-
-  if(node)
-    delete node;
 
   #ifdef DEBUG2
   ros::Duration dtime = ros::Time::now()-time;
