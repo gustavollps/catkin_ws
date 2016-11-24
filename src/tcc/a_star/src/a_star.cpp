@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]){
 
 	ros::init(argc, argv, "A_STAR");
-  AStarNode node(new ros::NodeHandle(),0.1);
+  AStarNode node(new ros::NodeHandle(),1);
   node.spin();
 	return 0;
 }
