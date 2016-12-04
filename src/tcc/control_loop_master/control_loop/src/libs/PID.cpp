@@ -21,10 +21,13 @@ float PID::Compute(float data)
 {
   derror_ = (setpoint_ - data) - error_;
   error_ = setpoint_ - data;
-  I_ += ki_*(error_+oerror_)/2.0;
+
+  if(error_!=oerror_)
+    I_ += ki_*(error_+oerror_)/2.0;
+
   I_ = constrain(I_,min_,max_);
   P_ = kp_*error_;
-  I_ = I_;
+  I_ = (data==0)?0:I_;
   D_ = kd_*derror_;
   output_ = P_+I_+D_;
   output_ = constrain(output_,min_,max_);

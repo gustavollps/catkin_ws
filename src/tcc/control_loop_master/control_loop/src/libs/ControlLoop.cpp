@@ -47,7 +47,7 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   nh_->getParam("M3_D",D3_);
 
 
-  PID_M1_ = new PID(freq,P1_,I1_,D1_,-127,127);
+  PID_M1_ = new PID(freq,P1_,I1_,D1_,-30,30);
   PID_M2_ = new PID(freq,P2_,I2_,D2_,-127,127);
   PID_M3_ = new PID(freq,P3_,I3_,D3_,-127,127);
 }
@@ -65,16 +65,19 @@ bool ControlLoop::changePID(tcc_msgs::changePID::Request &req, tcc_msgs::changeP
   nh_->getParam("M1_I",I1_);
   nh_->getParam("M1_D",D1_);
   PID_M1_->changeParameters(P1_,I1_,D1_);
+  PID_M1_->resetI();
 
   nh_->getParam("M2_P",P2_);
   nh_->getParam("M2_I",I2_);
   nh_->getParam("M2_D",D2_);
   PID_M2_->changeParameters(P2_,I2_,D2_);
+  PID_M2_->resetI();
 
   nh_->getParam("M3_P",P3_);
   nh_->getParam("M3_I",I3_);
   nh_->getParam("M3_D",D3_);
   PID_M3_->changeParameters(P3_,I3_,D3_);
+  PID_M3_->resetI();
   return true;
 }
 
