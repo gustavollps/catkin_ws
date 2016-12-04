@@ -23,8 +23,8 @@ class AStarNode
 
     float dt_;
 
+    void timerCallback(const ros::TimerEvent &event);
     void goalCallback(tcc_msgs::location_goal msg);
-    void timerCallback(const ros::TimerEvent &event);        
 
 };
 

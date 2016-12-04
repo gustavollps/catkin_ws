@@ -1,3 +1,6 @@
+#ifndef SERIAL_H
+#define SERIAL_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -27,3 +30,5 @@ private:
     struct termios toptions;
 
 };
+
+#endif

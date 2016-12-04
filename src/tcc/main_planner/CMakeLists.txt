@@ -1,35 +1,22 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(tcc_msgs)
+project(main_planner)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  sensor_msgs
   std_msgs
-  message_generation
+  tcc_msgs
 )
 
-add_message_files(
-  FILES
-  cmd_vel_msg.msg
-  interrupt_counter.msg
-  point.msg
-  location_goal.msg
-  pose2D.msg
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES main_planner
+#  CATKIN_DEPENDS roscpp sensor_msgs std_msgs tcc_msgs
+#  DEPENDS system_lib
 )
-
-add_service_files(
-  FILES
-  changePID.srv
-)
-
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
-
-catkin_package()
 
 include_directories(
   ${catkin_INCLUDE_DIRS}

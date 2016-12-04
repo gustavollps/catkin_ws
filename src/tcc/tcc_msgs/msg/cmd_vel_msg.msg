@@ -1,3 +1,3 @@
-float32 pwm1
-float32 pwm2
-float32 pwm3
+uint8 pwm1
+uint8 pwm2
+uint8 pwm3

@@ -1,3 +1,3 @@
-uint32 int1
-uint32 int2
-uint32 int3
+int32 int1
+int32 int2
+int32 int3
