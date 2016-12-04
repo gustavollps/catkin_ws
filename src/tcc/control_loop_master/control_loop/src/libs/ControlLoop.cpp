@@ -22,13 +22,13 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   int_counter_2_ = 0;
   int_counter_3_ = 0;
 
-  nh_->setParam("M1_P",1.0);
-  nh_->setParam("M1_I",1.0);
-  nh_->setParam("M1_D",0);
+  nh_->setParam("M1_P",0.5);
+  nh_->setParam("M1_I",1.5);
+  nh_->setParam("M1_D",0.01);
 
-  nh_->setParam("M2_P",1.0);
-  nh_->setParam("M2_I",1.0);
-  nh_->setParam("M2_D",0);
+  nh_->setParam("M2_P",0.5);
+  nh_->setParam("M2_I",1.5);
+  nh_->setParam("M2_D",0.01);
 
   nh_->setParam("M3_P",1.0);
   nh_->setParam("M3_I",1.0);
@@ -47,7 +47,7 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   nh_->getParam("M3_D",D3_);
 
 
-  PID_M1_ = new PID(freq,P1_,I1_,D1_,-30,30);
+  PID_M1_ = new PID(freq,P1_,I1_,D1_,-127,127);
   PID_M2_ = new PID(freq,P2_,I2_,D2_,-127,127);
   PID_M3_ = new PID(freq,P3_,I3_,D3_,-127,127);
 }
