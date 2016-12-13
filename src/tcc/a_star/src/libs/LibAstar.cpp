@@ -54,6 +54,7 @@ std::string LibAstar::pathFinder()
   map[7][6]=1;
   map[8][6]=1;
   map[9][6]=1;
+
 //  map[10][6]=1;
 //  map[11][6]=1;
 //

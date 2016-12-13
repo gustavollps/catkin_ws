@@ -20,19 +20,28 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
 
   int_counter_1_ = 0;
   int_counter_2_ = 0;
-  int_counter_3_ = 0;
+  int_counter_3_ = 0;   
 
-  nh_->setParam("M1_P",0.5);
-  nh_->setParam("M1_I",1.5);
-  nh_->setParam("M1_D",0.01);
+  if(!nh_->getParam("M1_P",P1_))
+  {
+    nh_->setParam("M1_P",0.5);
+    nh_->setParam("M1_I",1.5);
+    nh_->setParam("M1_D",0.01);
+  }
 
-  nh_->setParam("M2_P",0.5);
-  nh_->setParam("M2_I",1.5);
-  nh_->setParam("M2_D",0.01);
+  if(!nh_->getParam("M2_P",P2_))
+  {
+    nh_->setParam("M2_P",0.5);
+    nh_->setParam("M2_I",1.5);
+    nh_->setParam("M2_D",0.01);
+  }
 
-  nh_->setParam("M3_P",1.0);
-  nh_->setParam("M3_I",1.0);
-  nh_->setParam("M3_D",0);
+  if(!nh_->getParam("M3_P",P3_))
+  {
+    nh_->setParam("M3_P",0.5);
+    nh_->setParam("M3_I",1.5);
+    nh_->setParam("M3_D",0.01);
+  }
 
   nh_->getParam("M1_P",P1_);
   nh_->getParam("M1_I",I1_);
@@ -103,7 +112,7 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
 }
 
 void ControlLoop::timerCallback(const ros::TimerEvent &event)
-{
+{  
   tcc_msgs::cmd_vel_msg msg;
 
   PID_M1_->setpoint_ = motor1_vel_;
