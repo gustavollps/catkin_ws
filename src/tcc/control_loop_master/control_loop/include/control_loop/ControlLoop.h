@@ -50,6 +50,18 @@ class ControlLoop
         return -value;
     }
 
+    float constrain(float value, float min, float max){
+      if(value > max){
+        return max;
+      }
+      else if(value < min){
+        return min;
+      }
+      else{
+        return value;
+      }
+    }
+
 
   private:
 
@@ -67,6 +79,10 @@ class ControlLoop
     void cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg);    
     bool changePID(tcc_msgs::changePID::Request &req, tcc_msgs::changePID::Response &res);
 
+    void M1_getParams();
+    void M2_getParams();
+    void M3_getParams();
+
     PID *PID_M1_;
     PID *PID_M2_;
     PID *PID_M3_;
@@ -74,12 +90,15 @@ class ControlLoop
     motor_info M1,M2,M3;
 
 
-    float P1_,I1_,D1_;
-    int M1_offset_, M1_deadzone_;
-    float P2_,I2_,D2_;
-    int M2_offset_, M2_deadzone_;
-    float P3_,I3_,D3_;
-    int M3_offset_, M3_deadzone_;
+    struct PID_Params{
+      float P1,I1,D1,P2,I2,D2,P3,I3,D3;
+      int Offset, Deadzone;
+      int Threshold1, Threshold2;
+    };
+
+    PID_Params M1_params;
+    PID_Params M2_params;
+    PID_Params M3_params;
 
     bool controller_;
 

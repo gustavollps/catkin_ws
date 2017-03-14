@@ -46,30 +46,28 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   controller_ = 1;
   nh_->getParam("/Control_Loop/Velocity_Controller",controller_);
 
-  nh_->getParam("/Control_Loop/M1_P",P1_);
-  nh_->getParam("/Control_Loop/M1_I",I1_);
-  nh_->getParam("/Control_Loop/M1_D",D1_);
-  nh_->getParam("/Control_Loop/M1_adaptative_threshold",M1_offset_);
-  nh_->getParam("/Control_Loop/M1_deadzone",M1_deadzone_);
-
-  nh_->getParam("/Control_Loop/M2_P",P2_);
-  nh_->getParam("/Control_Loop/M2_I",I2_);
-  nh_->getParam("/Control_Loop/M2_D",D2_);
-  nh_->getParam("/Control_Loop/M2_adaptative_threshold",M2_offset_);
-  nh_->getParam("/Control_Loop/M2_deadzone",M2_deadzone_);
-
-  nh_->getParam("/Control_Loop/M3_P",P3_);
-  nh_->getParam("/Control_Loop/M3_I",I3_);
-  nh_->getParam("/Control_Loop/M3_D",D3_);
-  nh_->getParam("/Control_Loop/M3_adaptative_threshold",M3_offset_);
-  nh_->getParam("/Control_Loop/M3_deadzone",M3_deadzone_);
+  M1_getParams();
+  M2_getParams();
+  M3_getParams();
 
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------
 
-  PID_M1_ = new PID(freq,P1_,I1_,D1_,-127,127);
-  PID_M2_ = new PID(freq,P2_,I2_,D2_,-127,127);
-  PID_M3_ = new PID(freq,P3_,I3_,D3_,-127,127);
+  PID_M1_ = new PID(freq,
+                    M1_params.P1,
+                    M1_params.I1,
+                    M1_params.D1,
+                    -127,127);
+  PID_M2_ = new PID(freq,
+                    M2_params.P1,
+                    M2_params.I1,
+                    M2_params.D1,
+                    -127,127);
+
+  PID_M3_ = new PID(freq,
+                    M1_params.P1,
+                    M1_params.I1,
+                    M3_params.D1,-127,127);
 
 }
 
@@ -82,33 +80,90 @@ ControlLoop::~ControlLoop()
 
 bool ControlLoop::changePID(tcc_msgs::changePID::Request &req, tcc_msgs::changePID::Response &res){
 
-  nh_->getParam("/Control_Loop/M1_P",P1_);
-  nh_->getParam("/Control_Loop/M1_I",I1_);
-  nh_->getParam("/Control_Loop/M1_D",D1_);
-  nh_->getParam("/Control_Loop/M1_adaptative_threshold",M1_offset_);
-  nh_->getParam("/Control_Loop/M1_deadzone",M1_deadzone_);
-  PID_M1_->changeParameters(P1_,I1_,D1_);
+  M1_getParams();
+  PID_M1_->changeParameters(M1_params.P1,
+                            M1_params.I1,
+                            M1_params.D1);
   PID_M1_->resetI();
 
-  nh_->getParam("/Control_Loop/M2_P",P2_);
-  nh_->getParam("/Control_Loop/M2_I",I2_);
-  nh_->getParam("/Control_Loop/M2_D",D2_);
-  nh_->getParam("/Control_Loop/M2_adaptative_threshold",M2_offset_);
-  nh_->getParam("/Control_Loop/M2_deadzone",M2_deadzone_);
-  PID_M2_->changeParameters(P2_,I2_,D2_);
+  M2_getParams();
+  PID_M2_->changeParameters(M2_params.P1,
+                            M2_params.I1,
+                            M2_params.D1);
   PID_M2_->resetI();
 
-  nh_->getParam("/Control_Loop/M3_P",P3_);
-  nh_->getParam("/Control_Loop/M3_I",I3_);
-  nh_->getParam("/Control_Loop/M3_D",D3_);
-  nh_->getParam("/Control_Loop/M3_adaptative_threshold",M3_offset_);
-  nh_->getParam("/Control_Loop/M3_deadzone",M3_deadzone_);
-  PID_M3_->changeParameters(P3_,I3_,D3_);
+  M3_getParams();
+  PID_M3_->changeParameters(M3_params.P1,
+                            M3_params.I1,
+                            M3_params.D1);
   PID_M3_->resetI();
 
   controller_ = 1;
   nh_->getParam("/Control_Loop/Velocity_Controller",controller_);
   return true;
+}
+
+void ControlLoop::M1_getParams()
+{
+  nh_->getParam("/Control_Loop/M1_P1",M1_params.P1);
+  nh_->getParam("/Control_Loop/M1_P2",M1_params.P2);
+  nh_->getParam("/Control_Loop/M1_P3",M1_params.P3);
+
+  nh_->getParam("/Control_Loop/M1_I1",M1_params.I1);
+  nh_->getParam("/Control_Loop/M1_I2",M1_params.I2);
+  nh_->getParam("/Control_Loop/M1_I3",M1_params.I3);
+
+  nh_->getParam("/Control_Loop/M1_D1",M1_params.D1);
+  nh_->getParam("/Control_Loop/M1_D2",M1_params.D2);
+  nh_->getParam("/Control_Loop/M1_D3",M1_params.D3);
+
+  nh_->getParam("/Control_Loop/M1_Threshold1",M1_params.Threshold1);
+  nh_->getParam("/Control_Loop/M1_Threshold2",M1_params.Threshold2);
+
+  nh_->getParam("/Control_Loop/M1_offset",M1_params.Offset);
+  nh_->getParam("/Control_Loop/M1_deadzone",M1_params.Deadzone);
+}
+
+void ControlLoop::M2_getParams()
+{
+  nh_->getParam("/Control_Loop/M2_P1",M2_params.P1);
+  nh_->getParam("/Control_Loop/M2_P2",M2_params.P2);
+  nh_->getParam("/Control_Loop/M2_P3",M2_params.P3);
+
+  nh_->getParam("/Control_Loop/M2_I1",M2_params.I1);
+  nh_->getParam("/Control_Loop/M2_I2",M2_params.I2);
+  nh_->getParam("/Control_Loop/M2_I3",M2_params.I3);
+
+  nh_->getParam("/Control_Loop/M2_D1",M2_params.D1);
+  nh_->getParam("/Control_Loop/M2_D2",M2_params.D2);
+  nh_->getParam("/Control_Loop/M2_D3",M2_params.D3);
+
+  nh_->getParam("/Control_Loop/M2_Threshold1",M2_params.Threshold1);
+  nh_->getParam("/Control_Loop/M2_Threshold2",M2_params.Threshold2);
+
+  nh_->getParam("/Control_Loop/M2_offset",M2_params.Offset);
+  nh_->getParam("/Control_Loop/M2_deadzone",M2_params.Deadzone);
+}
+
+void ControlLoop::M3_getParams()
+{
+  nh_->getParam("/Control_Loop/M3_P1",M3_params.P1);
+  nh_->getParam("/Control_Loop/M3_P2",M3_params.P2);
+  nh_->getParam("/Control_Loop/M3_P3",M3_params.P3);
+
+  nh_->getParam("/Control_Loop/M3_I1",M3_params.I1);
+  nh_->getParam("/Control_Loop/M3_I2",M3_params.I2);
+  nh_->getParam("/Control_Loop/M3_I3",M3_params.I3);
+
+  nh_->getParam("/Control_Loop/M3_D1",M3_params.D1);
+  nh_->getParam("/Control_Loop/M3_D2",M3_params.D2);
+  nh_->getParam("/Control_Loop/M3_D3",M3_params.D3);
+
+  nh_->getParam("/Control_Loop/M3_Threshold1",M3_params.Threshold1);
+  nh_->getParam("/Control_Loop/M3_Threshold2",M3_params.Threshold2);
+
+  nh_->getParam("/Control_Loop/M3_offset",M3_params.Offset);
+  nh_->getParam("/Control_Loop/M3_deadzone",M3_params.Deadzone);
 }
 
 void ControlLoop::cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg)
@@ -164,31 +219,94 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
     PID_M2_->setpoint_ = M2.setpoint;
     PID_M3_->setpoint_ = M3.setpoint;
     //Control msg generation with PID calculations for the position
-    if(absf(M1.error) < M1_deadzone_)
+    if(absf(M1.error) < M1_params.Deadzone)
       pwm_msg_.pwm1 = 127;
     else
       pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.int_counter));
 
-    if(absf(M2.error) < M2_deadzone_)
+    if(absf(M2.error) < M2_params.Deadzone)
       pwm_msg_.pwm2 = 127;
     else
       pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.int_counter));
 
-    if(absf(M3.error) < M3_deadzone_)
+    if(absf(M3.error) < M3_params.Deadzone)
       pwm_msg_.pwm3 = 127;
     else
       pwm_msg_.pwm3 = 127+int(PID_M2_->Compute(M3.int_counter));
   }
   //Velocity Controller ----------------------------------------------------------------------------------------------
   else{
+    //Motor 1 controller -----------------------
     PID_M1_->setpoint_ = M1.velocity;
-    pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.dint));
+    if(M1.velocity == 0){
+      pwm_msg_.pwm1 = 127;
+    }
+    else if(absf(M1.dint) < M1_params.Threshold1)
+    {
+      PID_M1_->changeParameters(M1_params.P1,
+                                M1_params.I1,
+                                M1_params.D1);
+      pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.dint)) + M1_params.Offset;
+    }
+    else if(absf(M1.dint) < M1_params.Threshold2)
+    {
+      PID_M1_->changeParameters(M1_params.P2,
+                                M1_params.I2,
+                                M1_params.D2);
+      pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.dint));
+    }
+    else{
+      pwm_msg_.pwm1 = 127;
+    }
+    //------------------------------------------
 
+    //Motor 2 controller -----------------------
     PID_M2_->setpoint_ = M2.velocity;
-    pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.dint));
+    if(M2.velocity == 0){
+      pwm_msg_.pwm2 = 127;
+    }
+    else if(absf(M2.dint) < M2_params.Threshold1)
+    {
+      PID_M2_->changeParameters(M2_params.P1,
+                                M2_params.I1,
+                                M2_params.D1);
+      pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.dint)) + M2_params.Offset;
+    }
+    else if(absf(M2.dint) < M2_params.Threshold2)
+    {
+      PID_M2_->changeParameters(M2_params.P2,
+                                M2_params.I2,
+                                M2_params.D2);
+      pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.dint));
+    }
+    else{
+      pwm_msg_.pwm2 = 127;
+    }
+    //------------------------------------------
 
+    //Motor 3 controller -----------------------
     PID_M3_->setpoint_ = M3.velocity;
-    pwm_msg_.pwm3 = 127+int(PID_M3_->Compute(M3.dint));
+    if(M3.velocity == 0){
+      pwm_msg_.pwm3 = 127;
+    }
+    else if(absf(M3.dint) < M3_params.Threshold1)
+    {
+      PID_M3_->changeParameters(M3_params.P1,
+                                M3_params.I1,
+                                M3_params.D1);
+      pwm_msg_.pwm3 = 127+int(PID_M3_->Compute(M3.dint)) + M3_params.Offset;
+    }
+    else if(absf(M3.dint) < M3_params.Threshold2)
+    {
+      PID_M3_->changeParameters(M3_params.P2,
+                                M3_params.I2,
+                                M3_params.D2);
+      pwm_msg_.pwm3 = 127+int(PID_M3_->Compute(M3.dint));
+    }
+    else{
+      pwm_msg_.pwm3 = 127;
+    }
+    //------------------------------------------
 
   }
 
@@ -200,18 +318,29 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
   }
 
 #ifdef DEBUG  
-  std::cout << "==> Control results:" << std::endl
+  //system("clear");
+  std::cout << "==> Control results for PID 1:" << std::endl
             << "P: " << PID_M1_->P_ << std::endl
             << "I: " << PID_M1_->I_ << std::endl
             << "D: " << PID_M1_->D_ << std::endl
-            << "Setpoint1: " << M1.setpoint <<
-               "\t Setpoint2: " << M2.setpoint <<
-               "\t Setpoint3: " << M3.setpoint << std::endl
             << "Output1: " << (int)pwm_msg_.pwm1 <<
                "\t Output2: " << (int)pwm_msg_.pwm2 <<
-               "\t Output3: " << (int)pwm_msg_.pwm3 << std::endl
-            << "Feedback1: " << M1.int_counter <<
-               "\t Feedback2: " << M2.int_counter <<
-               "\t Feedback3: " << M3.int_counter << std::endl;
+               "\t Output3: " << (int)pwm_msg_.pwm3 << std::endl;
+  if(controller_){
+  std::cout    << "Setpoint1: " << M1.velocity <<
+                  "\t Setpoint2: " << M2.velocity <<
+                  "\t Setpoint3: " << M3.velocity << std::endl
+               << "Feedback1: " << M1.dint <<
+                  "\t Feedback2: " << M2.dint <<
+                  "\t Feedback3: " << M3.dint << std::endl;
+  }
+  else{
+  std::cout    << "Setpoint1: " << M1.setpoint<<
+                  "\t Setpoint2: " << M2.setpoint<<
+                  "\t Setpoint3: " << M3.setpoint<< std::endl
+               << "Feedback1: " << M1.int_counter <<
+                    "\t Feedback2: " << M2.int_counter <<
+                    "\t Feedback3: " << M3.int_counter << std::endl;
+  }
 #endif
 }
