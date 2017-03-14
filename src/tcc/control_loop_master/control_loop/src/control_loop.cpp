@@ -4,7 +4,7 @@
 int main(int argc, char **argv)
 {  
   ros::init(argc, argv, "Control_Loop");
-  ControlLoop controlNode(new ros::NodeHandle(),50);
-  controlNode.spin();
+  ControlLoop controlNode(new ros::NodeHandle(),CONTROL_FREQ);
+  ros::spin();
   return 0;
 }

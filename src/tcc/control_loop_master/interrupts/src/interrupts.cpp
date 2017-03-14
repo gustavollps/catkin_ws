@@ -1,18 +1,34 @@
 #include <ros/ros.h>
 #include "tcc_msgs/interrupt_counter.h"
+#include "tcc_msgs/cmd_vel_msg.h"
 #include <wiringPi.h>
+#include <boost/thread/thread.hpp>
+#include <realtime_tools/realtime_publisher.h>
+#include <tcc_msgs/CalibrateInt.h>
 
-#define M1_I1 7
-#define M1_I2 0
+//Interrupts Node
+/*pins:
+ * 7 & 0
+ * 2 & 3
+ * 12 & 13
+ */
 
-#define M2_I1 2
-#define M2_I2 3
+#define M1_I1 3
+#define M1_I2 2
 
-#define M3_I1 12
-#define M3_I2 13
+#define M2_I1 12
+#define M2_I2 13
 
+#define M3_I1 7
+#define M3_I2 0
 
-int read_freq = 10000;
+#define INT_FREQ 10000
+
+#define CALIBRATION_TIME 1
+
+int calibration_time = CALIBRATION_TIME;
+int int_freq = INT_FREQ;
+
 int32_t counter_int1 = 0;
 int32_t counter_int2 = 0;
 int32_t counter_int3 = 0;
@@ -126,14 +142,79 @@ void softwareISR(){
 
 }
 
+bool calibrationCallback(tcc_msgs::CalibrateInt::Request &req, tcc_msgs::CalibrateInt::Response &res){
+  tcc_msgs::cmd_vel_msg msg;  
+  msg.pwm1 = 154;
+  msg.pwm2 = 154;
+  msg.pwm3 = 154;
+
+  ros::NodeHandle temp_node;
+  ros::Publisher temp_pub = temp_node.advertise<tcc_msgs::cmd_vel_msg>("/PWM",10);
+  int calibration_counter = 0;
+
+  ros::Rate loop_rate(50);
+
+  while(ros::ok()){
+    msg.timestamp = ros::Time::now();
+    temp_pub.publish(msg);
+    dir1=true;
+    dir2=true;
+    dir3=true;   
+
+    loop_rate.sleep();
+
+    calibration_counter++;
+
+    if(calibration_counter > calibration_time*50)
+      break;
+
+  }
+  return true;
+}
+
+void loop(){
+  ros::NodeHandle node;    
+  realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter> *realtime_pub
+      = new realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter>(node,"/Interrupts_counter",10);
+  ros::ServiceServer calibration_service = node.advertiseService("/CalibrateInt",calibrationCallback);  
+
+  ros::Rate loop_rate(50);
+  while(ros::ok()){    
+
+    if(realtime_pub->trylock()){
+      realtime_pub->msg_.int1 = counter_int1;
+      realtime_pub->msg_.int2 = counter_int2;
+      realtime_pub->msg_.int3 = counter_int3;
+      //Timestamp for response time monitoring and fail safe (on pwm node)
+      realtime_pub->msg_.timestamp = ros::Time::now();
+      realtime_pub->unlockAndPublish();
+    }
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
+
+}
+
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "interrupts");
-  ros::NodeHandle nh;
-  ros::Rate loop(read_freq);
-  ros::Publisher pub = nh.advertise<tcc_msgs::interrupt_counter>("/Interrupts_counter",10);
+  int rate = 10000;
+  boost::thread thread(loop);
+
+  ros::NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
+  if(!nh->getParam("/Interrupts/INT_FREQ",int_freq)){
+    ROS_ERROR("[INTERRUPTS] Parameters YAML file not loaded");
+    ros::shutdown();
+  }
+
+  nh->getParam("/Interrupts/CALIBRATION_TIME",calibration_time);
+
+  ros::Rate loop(int_freq);
+  //ros::Publisher pub = nh->advertise<tcc_msgs::interrupt_counter>("/Interrupts_counter",10);  
+
   tcc_msgs::interrupt_counter msg;
   int counter = 0;
+
   wiringPiSetup();
   pinMode(M1_I1,INPUT);
   pinMode(M1_I2,INPUT);
@@ -151,16 +232,11 @@ int main(int argc, char **argv)
   pin5_state = digitalRead(M3_I1);
   pin6_state = digitalRead(M3_I2);
 
-  while(ros::ok()){
-    counter++;
-    softwareISR();
-    if(counter==read_freq/50){
-      msg.int1 = counter_int1;
-      msg.int2 = counter_int2;
-      msg.int3 = counter_int3;
-      pub.publish(msg);
-      counter = 0;
-    }
+  while(ros::ok()){    
+    softwareISR();    
     loop.sleep();
   }
+
+  thread.join();
+  return 0;
 }

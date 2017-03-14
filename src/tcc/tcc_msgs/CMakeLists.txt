@@ -17,11 +17,13 @@ add_message_files(
   point.msg
   location_goal.msg
   pose2D.msg
+  magdata.msg
 )
 
 add_service_files(
   FILES
   changePID.srv
+  CalibrateInt.srv
 )
 
 generate_messages(

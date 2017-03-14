@@ -1,0 +1,13 @@
+<!--xml-->
+<launch>
+  <node name="PWM" pkg="pwm" type="pwm"/>
+  <node name="Interrupts" pkg="interrupts" type="interrupts">
+    <rosparam file="$(find interrupts)/config/interrupts_params.yaml" command="load"/>
+  </node>
+  <node name="Heading" pkg="heading" type="heading">
+    <rosparam file="$(find heading)/config/heading_params.yaml" command="load"/>
+  </node>
+  <node name="Control_Loop" pkg="control_loop" type="control_loop" output="screen">
+    <rosparam file="$(find control_loop)/config/control_params.yaml" command="load"/>
+  </node>
+</launch>

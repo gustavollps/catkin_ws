@@ -1,0 +1,23 @@
+M1_P: 0.5
+M1_I: 1.5
+M1_D: 0.0
+M1_adaptative_threshold: 0
+M1_deadzone: 50
+
+M2_P: 0.5
+M2_I: 1.5
+M2_D: 0.0
+M2_adaptative_threshold: 0
+M2_deadzone: 50
+
+M3_P: 0.5
+M3_I: 1.5
+M3_D: 0.0
+M3_adaptative_threshold: 0
+M3_deadzone: 50
+
+startup_delay: 6
+
+ENCODER_PULSE_PER_METER: 2000
+
+Velocity_Controller: 1

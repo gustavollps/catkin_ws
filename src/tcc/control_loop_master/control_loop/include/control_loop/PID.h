@@ -16,12 +16,14 @@ class PID
     float D_;
     float error_;
 
+    float kp_;
+
   private:
     float period_;
     float min_;
     float max_;
 
-    float kp_;
+
     float ki_;
     float kd_;
     float output_;

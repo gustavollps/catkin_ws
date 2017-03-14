@@ -181,6 +181,8 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
   }
   //Velocity Controller ----------------------------------------------------------------------------------------------
   else{
+    if(M1.dint)
+    
     PID_M1_->setpoint_ = M1.velocity;
     pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.dint));
 
