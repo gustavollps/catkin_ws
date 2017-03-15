@@ -13,6 +13,8 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   pid_sever_ = nh_->advertiseService("/TCC/ChangePID",&ControlLoop::changePID,this);
 
   callback_counter_ = 0;
+  cmd_vel_ = false;
+  cmd_vel_counter_ = 0;
 
   M1.position=0;
   M1.setpoint=0;
@@ -67,7 +69,8 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   PID_M3_ = new PID(freq,
                     M1_params.P1,
                     M1_params.I1,
-                    M3_params.D1,-127,127);
+                    M3_params.D1,
+                    -127,127);
 
 }
 
@@ -173,11 +176,26 @@ void ControlLoop::cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg)
   M1.velocity = PULSE_TO_METER_K*( 0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
   M2.velocity = PULSE_TO_METER_K*(-0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
   M3.velocity = PULSE_TO_METER_K*(                        - 0.666667*msg->linear.x + 0.333333*msg->angular.z);
-  ROS_WARN("New velocity: \nM1: %f \nM2: %f \nM3: %f Motor_SPD",M1.velocity,M2.velocity,M3.velocity);
+  ROS_WARN("New velocity: \nM1: %f \nM2: %f \nM3: %f",M1.velocity,M2.velocity,M3.velocity);
+  cmd_vel_ = true;
 }
 
 void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr &msg)
 {
+  //More than 1 sec without cmd_vel msg = STOP
+  if(!cmd_vel_){
+    cmd_vel_counter_++;
+    if(cmd_vel_counter_>50){
+      M1.velocity = 0;
+      M2.velocity = 0;
+      M3.velocity = 0;
+    }
+  }
+  else{
+    cmd_vel_ = false;
+    cmd_vel_counter_ = 0;
+  }
+
   M1.dint = msg->int1 - M1.int_counter;
   M2.dint = msg->int2 - M2.int_counter;
   M3.dint = msg->int3 - M3.int_counter;
@@ -240,13 +258,19 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
     PID_M1_->setpoint_ = M1.velocity;
     if(M1.velocity == 0){
       pwm_msg_.pwm1 = 127;
+      PID_M1_->resetI();
     }
     else if(absf(M1.dint) < M1_params.Threshold1)
     {
       PID_M1_->changeParameters(M1_params.P1,
                                 M1_params.I1,
-                                M1_params.D1);
-      pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.dint)) + M1_params.Offset;
+                                M1_params.D1);      
+      if(M1.velocity > 0){
+        pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.dint)) + M1_params.Offset;
+      }
+      else{
+        pwm_msg_.pwm1 = 127+int(PID_M1_->Compute(M1.dint)) - M1_params.Offset;
+      }
     }
     else if(absf(M1.dint) < M1_params.Threshold2)
     {
@@ -257,6 +281,7 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
     }
     else{
       pwm_msg_.pwm1 = 127;
+      PID_M1_->resetI();
     }
     //------------------------------------------
 
@@ -264,13 +289,19 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
     PID_M2_->setpoint_ = M2.velocity;
     if(M2.velocity == 0){
       pwm_msg_.pwm2 = 127;
+      PID_M2_->resetI();
     }
     else if(absf(M2.dint) < M2_params.Threshold1)
     {
       PID_M2_->changeParameters(M2_params.P1,
                                 M2_params.I1,
                                 M2_params.D1);
-      pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.dint)) + M2_params.Offset;
+      if(M2.velocity > 0){
+        pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.dint)) + M2_params.Offset;
+      }
+      else{
+        pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.dint)) - M2_params.Offset;
+      }
     }
     else if(absf(M2.dint) < M2_params.Threshold2)
     {
@@ -280,6 +311,7 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
       pwm_msg_.pwm2 = 127+int(PID_M2_->Compute(M2.dint));
     }
     else{
+      PID_M2_->resetI();
       pwm_msg_.pwm2 = 127;
     }
     //------------------------------------------
@@ -287,6 +319,7 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
     //Motor 3 controller -----------------------
     PID_M3_->setpoint_ = M3.velocity;
     if(M3.velocity == 0){
+      PID_M3_->resetI();
       pwm_msg_.pwm3 = 127;
     }
     else if(absf(M3.dint) < M3_params.Threshold1)
@@ -294,7 +327,12 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
       PID_M3_->changeParameters(M3_params.P1,
                                 M3_params.I1,
                                 M3_params.D1);
-      pwm_msg_.pwm3 = 127+int(PID_M3_->Compute(M3.dint)) + M3_params.Offset;
+      if(M3.velocity > 0){
+        pwm_msg_.pwm3 = 127+int(PID_M3_->Compute(M3.dint)) + M3_params.Offset;
+      }
+      else{
+        pwm_msg_.pwm3 = 127+int(PID_M3_->Compute(M3.dint)) - M3_params.Offset;
+      }
     }
     else if(absf(M3.dint) < M3_params.Threshold2)
     {
@@ -304,6 +342,7 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
       pwm_msg_.pwm3 = 127+int(PID_M3_->Compute(M3.dint));
     }
     else{
+      PID_M3_->resetI();
       pwm_msg_.pwm3 = 127;
     }
     //------------------------------------------

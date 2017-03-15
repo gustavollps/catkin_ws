@@ -21,7 +21,7 @@
 #include "../include/heading/maths.h"
 #include "../include/heading/mpu.h"
 
-//#define DEBUG_MAG_GYRO
+#define DEBUG_MAG_GYRO
 
 #define PI 3.14159265
 #define FILTER_MERGE 0.005
@@ -47,6 +47,7 @@ int min_x=30000,max_x=-30000;
 float x_out=0,y_out=0,z_out=0;
 int delay_calibration = DELAY_CALIBRATION; //ms
 float filter_merge = FILTER_MERGE;
+float calibration_time = 2;
 
 int main(int argc, char **argv)
 {
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
   }
 
   nh.getParam("/Heading/FILTER_MERGE", filter_merge);
+  nh.getParam("/Heading/CALIBRATION_TIME", calibration_time);
   //---------------------------------------------------------------------------------------------------------------------
 
   //Waiting time for PWM and Interrupts proper initialization -----------------------------------------------------------
@@ -144,14 +146,14 @@ int main(int argc, char **argv)
     y_out = (msg.data3);
 
     max_x = (x_out>max_x)?(x_out):(max_x);
-    max_x = 210;
+    //max_x = 210;
     min_x = (x_out<min_x)?(x_out):(min_x);
-    min_x = -340;
+    //min_x = -340;
 
     max_y = (y_out>max_y)?(y_out):(max_y);
-    max_y = 830;
+    //max_y = 830;
     min_y = (y_out<min_y)?(y_out):(min_y);
-    min_y = 275;    
+    //min_y = 275;
 
     gyro_data = gyroscope.GetDataZ();
 
@@ -164,7 +166,7 @@ int main(int argc, char **argv)
 
 
     calibration_counter++;
-    if(calibration_counter>100)
+    if(calibration_counter>calibration_time*freq)
       break;
 
     loop.sleep();

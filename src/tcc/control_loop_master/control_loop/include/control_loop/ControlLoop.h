@@ -60,8 +60,7 @@ class ControlLoop
       else{
         return value;
       }
-    }
-
+    }    
 
   private:
 
@@ -107,6 +106,8 @@ class ControlLoop
     float motor3_vel_;
 
     int callback_counter_;
+    int cmd_vel_counter_;
+    bool cmd_vel_;
 
     float PULSE_TO_METER_K;
     float ENCODER_PULSE_PER_METER;
