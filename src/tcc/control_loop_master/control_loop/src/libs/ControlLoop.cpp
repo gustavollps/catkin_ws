@@ -10,7 +10,7 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   //Interrupts counter node (callback with PID calculations for better response time)
   interrupt_sub_ = nh_->subscribe("/Interrupts_counter",10,&ControlLoop::interruptCallback,this);
   cmd_vel_sub_ = nh_ ->subscribe("/cmd_vel",10,&ControlLoop::cmd_velCallback,this);
-  pid_sever_ = nh_->advertiseService("/TCC/ChangePID",&ControlLoop::changePID,this);
+  pid_sever_ = nh_->advertiseService("/ChangePID",&ControlLoop::changePID,this);
 
   callback_counter_ = 0;
   cmd_vel_ = false;

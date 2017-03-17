@@ -24,6 +24,7 @@ add_service_files(
   FILES
   changePID.srv
   CalibrateInt.srv
+  ChangeGoal.srv
 )
 
 generate_messages(

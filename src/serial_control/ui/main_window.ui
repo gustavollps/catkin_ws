@@ -36,13 +36,13 @@
          <number>6</number>
         </property>
         <property name="maximum">
-         <double>1000.000000000000000</double>
+         <double>10.000000000000000</double>
         </property>
         <property name="singleStep">
-         <double>0.100000000000000</double>
+         <double>0.005000000000000</double>
         </property>
         <property name="value">
-         <double>1.000000000000000</double>
+         <double>0.010000000000000</double>
         </property>
        </widget>
       </item>
@@ -64,8 +64,11 @@
       </item>
       <item row="8" column="4">
        <widget class="QLabel" name="label_10">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string>PID min</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -123,21 +126,24 @@
         <property name="decimals">
          <number>2</number>
         </property>
+        <property name="minimum">
+         <double>-180.000000000000000</double>
+        </property>
         <property name="maximum">
-         <double>10000.000000000000000</double>
+         <double>180.000000000000000</double>
         </property>
         <property name="singleStep">
-         <double>100.000000000000000</double>
+         <double>1.000000000000000</double>
         </property>
         <property name="value">
-         <double>3500.000000000000000</double>
+         <double>0.000000000000000</double>
         </property>
        </widget>
       </item>
       <item row="8" column="2">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>PID max</string>
+         <string>Deadzone</string>
         </property>
        </widget>
       </item>
@@ -163,13 +169,13 @@
          <number>6</number>
         </property>
         <property name="maximum">
-         <double>10000.000000000000000</double>
+         <double>10.000000000000000</double>
         </property>
         <property name="singleStep">
-         <double>0.100000000000000</double>
+         <double>0.005000000000000</double>
         </property>
         <property name="value">
-         <double>1.000000000000000</double>
+         <double>0.050000000000000</double>
         </property>
        </widget>
       </item>
@@ -189,13 +195,13 @@
          <number>6</number>
         </property>
         <property name="maximum">
-         <double>1000.000000000000000</double>
+         <double>10.000000000000000</double>
         </property>
         <property name="singleStep">
-         <double>0.100000000000000</double>
+         <double>0.005000000000000</double>
         </property>
         <property name="value">
-         <double>1.000000000000000</double>
+         <double>0.010000000000000</double>
         </property>
        </widget>
       </item>
@@ -243,19 +249,25 @@
       </item>
       <item row="9" column="2">
        <widget class="QDoubleSpinBox" name="pid_max">
+        <property name="minimum">
+         <double>-10.000000000000000</double>
+        </property>
         <property name="maximum">
-         <double>1000.000000000000000</double>
+         <double>10.000000000000000</double>
         </property>
         <property name="singleStep">
          <double>0.100000000000000</double>
         </property>
         <property name="value">
-         <double>100.000000000000000</double>
+         <double>4.000000000000000</double>
         </property>
        </widget>
       </item>
       <item row="9" column="4">
        <widget class="QDoubleSpinBox" name="pid_min">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimum">
          <double>-1000.000000000000000</double>
         </property>
@@ -311,7 +323,7 @@
      <x>0</x>
      <y>0</y>
      <width>944</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

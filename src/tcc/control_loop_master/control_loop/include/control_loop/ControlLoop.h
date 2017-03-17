@@ -24,7 +24,7 @@
 //Personal libraries
 #include "PID.h"
 
-#define DEBUG
+//#define DEBUG
 
 #define CONTROL_FREQ 50 
 
@@ -72,7 +72,7 @@ class ControlLoop
     ros::Publisher odom_pub_;    
     realtime_tools::RealtimePublisher<tcc_msgs::cmd_vel_msg> *realtime_pwm_pub_;
 
-    ros::ServiceServer pid_sever_;          
+    ros::ServiceServer pid_sever_;
 
     void interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr &msg);
     void cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg);    

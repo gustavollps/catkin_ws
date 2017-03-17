@@ -1,0 +1,5 @@
+Kp: 0.02
+Ki: 0.0
+Kd: 0.025
+DeadzoneSize: 3
+Angle_Setpoint: 0

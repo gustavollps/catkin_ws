@@ -33,49 +33,50 @@ namespace serial_control {
 *****************************************************************************/
 
 class QNode : public QThread {
-    Q_OBJECT
+  Q_OBJECT
 public:
-	QNode(int argc, char** argv );
-	virtual ~QNode();
-	bool init();
-	bool init(const std::string &master_url, const std::string &host_url);
-	void run();
-    bool clicked;
-    float kp;
-    float ki;
-    float kd;
-    float setpoint;
-    float min;
-    float max;
+  QNode(int argc, char** argv );
+  virtual ~QNode();
+  bool init();
+  bool init(const std::string &master_url, const std::string &host_url);
+  void run();
+  bool clicked;
+  float kp;
+  float ki;
+  float kd;
+  float setpoint;
+  float min;
+  float max;
 
-    typedef union{
-        float floatData;
-        unsigned char byteData[4];
-    }binaryFloat;
+  typedef union{
+    float floatData;
+    unsigned char byteData[4];
+  }binaryFloat;
 
-	/*********************
-	** Logging
-	**********************/
-	enum LogLevel {
-	         Debug,
-	         Info,
-	         Warn,
-	         Error,
-	         Fatal
-	 };
+  /*********************
+  ** Logging
+  **********************/
+  enum LogLevel {
+    Debug,
+    Info,
+    Warn,
+    Error,
+    Fatal
+  };
 
-	QStringListModel* loggingModel() { return &logging_model; }
-    //void log( const LogLevel &level, const std::string &msg);
+  QStringListModel* loggingModel() { return &logging_model; }
+  //void log( const LogLevel &level, const std::string &msg);
 
 Q_SIGNALS:
-	void loggingUpdated();
-    void rosShutdown();
+  void loggingUpdated();
+  void rosShutdown();
 
 private:
-	int init_argc;
-	char** init_argv;
-    ros::Publisher serial_publisher;
-    QStringListModel logging_model;
+  int init_argc;
+  char** init_argv;
+  ros::Publisher serial_publisher;
+  ros::ServiceClient pid_service;
+  QStringListModel logging_model;
 };
 
 }  // namespace serial_control
