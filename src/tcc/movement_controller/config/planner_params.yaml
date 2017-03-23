@@ -1,5 +1,6 @@
 Kp: 0.02
 Ki: 0.0
-Kd: 0.025
+Kd: 0.002
 DeadzoneSize: 3
 Angle_Setpoint: 0
+PPM_CONSTANT: 0.391066

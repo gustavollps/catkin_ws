@@ -10,7 +10,7 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   //Interrupts counter node (callback with PID calculations for better response time)
   interrupt_sub_ = nh_->subscribe("/Interrupts_counter",10,&ControlLoop::interruptCallback,this);
   cmd_vel_sub_ = nh_ ->subscribe("/cmd_vel",10,&ControlLoop::cmd_velCallback,this);
-  pid_sever_ = nh_->advertiseService("/ChangePID",&ControlLoop::changePID,this);
+  pid_sever_ = nh_->advertiseService("/ChangePID",&ControlLoop::changePID,this);    
 
   callback_counter_ = 0;
   cmd_vel_ = false;
@@ -51,6 +51,7 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   M1_getParams();
   M2_getParams();
   M3_getParams();
+  Acceleration_getParams();
 
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------
@@ -77,8 +78,7 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
 ControlLoop::~ControlLoop()
 {  
   interrupt_sub_.shutdown();
-  cmd_vel_sub_.shutdown();
-  odom_pub_.shutdown();
+  cmd_vel_sub_.shutdown();  
 }
 
 bool ControlLoop::changePID(tcc_msgs::changePID::Request &req, tcc_msgs::changePID::Response &res){
@@ -169,6 +169,12 @@ void ControlLoop::M3_getParams()
   nh_->getParam("/Control_Loop/M3_deadzone",M3_params.Deadzone);
 }
 
+void ControlLoop::Acceleration_getParams()
+{
+  nh_->getParam("/Control_Loop/Acceleration_Ramp",accel_ramp_);
+  nh_->getParam("/Control_Loop/Deceleration_Ramp",decel_ramp_);
+}
+
 void ControlLoop::cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg)
 {
   //3 wheel omnidirectional equations
@@ -219,7 +225,7 @@ void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr 
       callback_counter_++;
     }
 
-    //Update setpoint based on speed (cmd_vel) to sumilate a ramp input
+    //Update setpoint based on speed (cmd_vel) to simulate a ramp input
     M1.setpoint = M1.position + M1.velocity;
     M1.position = M1.setpoint;
     M1.error = M1.setpoint - M1.int_counter;

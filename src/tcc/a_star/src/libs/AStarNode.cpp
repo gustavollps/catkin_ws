@@ -6,10 +6,9 @@ AStarNode::AStarNode(ros::NodeHandle *nh, float dt)
   nh_ = nh;
   dt_ = dt;
   start_ = new Point(0,0);
-  goal_ = new Point(9,9);
-  main_timer_ = nh->createTimer(ros::Duration(dt), &AStarNode::timerCallback, this);
+  goal_ = new Point(9,9);  
   pub_route_ = nh->advertise<std_msgs::String>("/Route",10);
-  sub_positions_ = nh->subscribe<tcc_msgs::location_goal>("/Position_Goal", 10, &AStarNode::goalCallback, this);
+  sub_positions_ = nh->subscribe<tcc_msgs::location_goal>("/Goal", 10, &AStarNode::goalCallback, this);
 
 }
 
@@ -31,30 +30,25 @@ void AStarNode::spin() const
   }
 }
 
-void AStarNode::timerCallback(const ros::TimerEvent &event)
-{  
+void AStarNode::goalCallback(tcc_msgs::location_goal msg)
+{
   ROS_INFO("Running pathFinder");
 
-  Point start(start_->x_,start_->y_);
-  Point goal(goal_->x_,goal_->y_);
+  Point start(msg.start.x,msg.start.y);
+  Point goal(msg.goal.x,msg.goal.y);
 
   pathRouter_ = new LibAstar(goal,start);
 
-  std_msgs::String msg;
-  msg.data = pathRouter_->pathFinder();
+  std_msgs::String route;
+  route.data = pathRouter_->pathFinder();
 
-  if(!msg.data.empty()){
-    pub_route_.publish(msg);
+  if(!route.data.empty()){
+    pub_route_.publish(route);
   }
   else{
-    msg.data = "0";
-    pub_route_.publish(msg);
+    route.data = "0";
+    pub_route_.publish(route);
   }
 
   delete pathRouter_;
-}
-
-void AStarNode::goalCallback(tcc_msgs::location_goal msg)
-{
-
 }

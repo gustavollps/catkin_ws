@@ -12,6 +12,9 @@
 #include <tcc_msgs/magdata.h>
 #include <tcc_msgs/CalibrateInt.h>
 
+//Srv
+#include <tcc_msgs/ZeroAngle.h>
+
 //WiringPi
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
@@ -34,7 +37,7 @@ int freq = 100;
 float dt = 1.0/float(freq);
 
 float mag_offset = 0;
-float gyro_angle = 0;
+double gyro_angle = 0;
 float mag_angle = 0;
 int raw_data;
 int16_t gyro_data;
@@ -52,6 +55,10 @@ int delay_calibration = DELAY_CALIBRATION; //ms
 float filter_merge = FILTER_MERGE;
 float calibration_time = 2;
 
+bool zeroangleCallBack(tcc_msgs::ZeroAngle::Request &req, tcc_msgs::ZeroAngle::Response &res){
+  gyro_angle = 0;
+}
+
 int main(int argc, char **argv)
 {
 
@@ -62,6 +69,7 @@ int main(int argc, char **argv)
   ros::Publisher heading_pub = nh.advertise<std_msgs::Float32>("Heading",10);
 
   //ros::ServiceServer calibrate_server = nh.advertiseService("/CalibrateInt", calibrationCallback);
+  ros::ServiceServer zeroAngle = nh.advertiseService("/ZeroAngle",zeroangleCallBack);
   ros::ServiceClient calibrate_client = nh.serviceClient<tcc_msgs::CalibrateInt>("/CalibrateInt");
 
   ros::Rate loop(freq);
@@ -112,7 +120,7 @@ int main(int argc, char **argv)
 
   //---------------------------------------------------------------------------------------------------------------------
   //Gyro offset ---------------------------------------------------------------------------------------------------------
-  float offset = 0;
+  double offset = 0;
 
   //Throw away the trashy first ones samples
   for(int i=0;i<10;i++){
@@ -133,6 +141,7 @@ int main(int argc, char **argv)
   //Calibration service -------------------------------------------------------------------------------------------------
   tcc_msgs::CalibrateInt srv;
   calibrate_client.call(srv);
+
   if(use_mag){
     usleep(30*1000);
 
@@ -198,10 +207,12 @@ int main(int argc, char **argv)
     mag_offset = mag_angle - gyro_angle;
   }
 
+
   //---------------------------------------------------------------------------------------------------------------------
 
-
+#ifdef DEBUG_MAG_CALIBRATION
   int counter = 0; //debug counter
+#endif
 
   while(ros::ok())
   {
@@ -254,8 +265,10 @@ int main(int argc, char **argv)
     msg.data = gyro_angle;
     heading_pub.publish(msg);
 
+    ros::spinOnce();
+
     //ROS sleep to maintain the loop freq
-    loop.sleep();
+    loop.sleep();    
 
 #ifdef DEBUG_MAG_GYRO
 

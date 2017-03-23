@@ -143,7 +143,7 @@ void softwareISR(){
 }
 
 bool calibrationCallback(tcc_msgs::CalibrateInt::Request &req, tcc_msgs::CalibrateInt::Response &res){
-  tcc_msgs::cmd_vel_msg msg;  
+  tcc_msgs::cmd_vel_msg msg;
   msg.pwm1 = 154;
   msg.pwm2 = 154;
   msg.pwm3 = 154;

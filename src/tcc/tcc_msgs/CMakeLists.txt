@@ -17,6 +17,7 @@ add_message_files(
   point.msg
   location_goal.msg
   pose2D.msg
+  movement_msg.msg
   magdata.msg
 )
 
@@ -25,6 +26,8 @@ add_service_files(
   changePID.srv
   CalibrateInt.srv
   ChangeGoal.srv
+  ZeroAngle.srv
+  ResetOdom.srv
 )
 
 generate_messages(

@@ -34,11 +34,11 @@ class ControlLoop
     ControlLoop(ros::NodeHandle *nh, float freq);
     ~ControlLoop();    
 
-    tcc_msgs::cmd_vel_msg pwm_msg_;
+    tcc_msgs::cmd_vel_msg pwm_msg_;    
 
     struct motor_info{
       int32_t int_counter, dint;
-      float velocity;
+      float velocity , velsetpoint;
       float error;
       double position, setpoint;
     };
@@ -69,7 +69,6 @@ class ControlLoop
     ros::Subscriber interrupt_sub_;
     ros::Subscriber cmd_vel_sub_;
 
-    ros::Publisher odom_pub_;    
     realtime_tools::RealtimePublisher<tcc_msgs::cmd_vel_msg> *realtime_pwm_pub_;
 
     ros::ServiceServer pid_sever_;
@@ -77,10 +76,13 @@ class ControlLoop
     void interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr &msg);
     void cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg);    
     bool changePID(tcc_msgs::changePID::Request &req, tcc_msgs::changePID::Response &res);
+    void odomTimer(const ros::TimerEvent &event);
+
 
     void M1_getParams();
     void M2_getParams();
     void M3_getParams();
+    void Acceleration_getParams();
 
     PID *PID_M1_;
     PID *PID_M2_;
@@ -105,12 +107,17 @@ class ControlLoop
     float motor2_vel_;
     float motor3_vel_;
 
+    float accel_ramp_;
+    float decel_ramp_;
+
     int callback_counter_;
     int cmd_vel_counter_;
     bool cmd_vel_;
 
     float PULSE_TO_METER_K;
     float ENCODER_PULSE_PER_METER;
+
+
 };
 
 #endif // CONTROLLOOP_H
