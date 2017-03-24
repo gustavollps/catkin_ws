@@ -44,6 +44,14 @@ PID *PID_rotation;
 float angle = 0;
 float angle_setpoint = 0;
 
+float accel_ramp;
+float decel_ramp;
+
+struct Velocity{
+  float Vx;
+  float Vy;
+};
+
 struct intCounter{
   long int m1_counter;
   long int m2_counter;
@@ -71,6 +79,8 @@ position pose;
 intCounter new_int,old_int;
 intDeriv m_spds;
 Twist velocity;
+Velocity setpoint_velocity;
+Velocity velocity_msg;
 
 
 ros::Publisher cmd_vel_pub;
@@ -95,10 +105,50 @@ void timerCallBack(const ros::TimerEvent &event)
   }
 
 
+  //Deceleration_Ramp for Vx
+  if(setpoint_velocity.Vx < velocity_msg.Vx){
+    velocity_msg.Vx -= decel_ramp;
+    if(velocity_msg.Vx < setpoint_velocity.Vx)
+      velocity_msg.Vx = setpoint_velocity.Vx;
+  }
+  //Acceleration_Ramp for Vx
+  else if(setpoint_velocity.Vx > velocity_msg.Vx){
+    velocity_msg.Vx +=accel_ramp;
+    if(velocity_msg.Vx > setpoint_velocity.Vx)
+      velocity_msg.Vx = setpoint_velocity.Vx;
+  }
+  else{
+    velocity_msg.Vx = setpoint_velocity.Vx;
+  }
+
+  //Deceleration_Ramp for Vy
+  if(setpoint_velocity.Vy < velocity_msg.Vy){
+    velocity_msg.Vy -= decel_ramp;
+    if(velocity_msg.Vy < setpoint_velocity.Vy)
+      velocity_msg.Vy = setpoint_velocity.Vy;
+  }
+  //Acceleration_Ramp for Vy
+  else if(setpoint_velocity.Vy > velocity_msg.Vy){
+    velocity_msg.Vy +=accel_ramp;
+    if(velocity_msg.Vy > setpoint_velocity.Vy)
+      velocity_msg.Vy = setpoint_velocity.Vy;
+  }
+  else{
+    velocity_msg.Vy = setpoint_velocity.Vy;
+  }
+
+  ROS_INFO("\n Setpoint velocity Vx: %f \n Setpoint velocity Vy: %f \n Vx: %f \n Vy: %f",setpoint_velocity.Vx,setpoint_velocity.Vy,velocity.x,velocity.y);
+
+  cmd_vel_msg.linear.x = velocity_msg.Vx;
+  cmd_vel_msg.linear.y = velocity_msg.Vy;
+
+
   if(cmd_vel){
     cmd_vel_pub.publish(cmd_vel_msg);
   }
   else{
+    velocity_msg.Vx = 0;
+    velocity_msg.Vy = 0;
     cmd_vel_msg.linear.x=0;
     cmd_vel_msg.linear.y=0;
     cmd_vel_pub.publish(cmd_vel_msg);
@@ -125,6 +175,7 @@ void intCallBack(tcc_msgs::interrupt_counter msg)
   old_int.m2_counter = new_int.m2_counter;
   old_int.m3_counter = new_int.m3_counter;
 
+  //Current velocity
   velocity.x = 0.866025*m_spds.m1 - 0.866025*m_spds.m2;
   velocity.y = 0.500000*m_spds.m1 + 0.500000*m_spds.m2 - 1.000000*m_spds.m3;
 
@@ -148,7 +199,7 @@ void remotecontrolCallBack(geometry_msgs::Twist msg){
   if(cossine !=1 && cossine !=-1)
   {
     phi = acos(cossine);
-    std::cout << "Primeiro phi: "<< phi << " cossine: " << cossine << std::endl;
+    //std::cout << "Primeiro phi: "<< phi << " cossine: " << cossine << std::endl;
   }
   else if(cossine == 1){
     phi = 0;
@@ -163,17 +214,18 @@ void remotecontrolCallBack(geometry_msgs::Twist msg){
     phi = -phi;
   }
 
-  ROS_INFO("\nFinal velocity: %f \nVelocity Angle phi: %f \nXg: %f \nYg: %f",final_velocity, phi,Xg,Yg);
+  //ROS_INFO("\nFinal velocity: %f \nVelocity Angle phi: %f \nXg: %f \nYg: %f",final_velocity, phi,Xg,Yg);
 
   double alpha = phi+angle_setpoint;
 
+  //Update velocity setpoints
   if(final_velocity!=0){
-    cmd_vel_msg.linear.y = final_velocity*sin(alpha*PI/180.0);
-    cmd_vel_msg.linear.x = final_velocity*cos(alpha*PI/180.0);
+    setpoint_velocity.Vy = final_velocity*sin(alpha*PI/180.0);
+    setpoint_velocity.Vx = final_velocity*cos(alpha*PI/180.0);
   }
   else{
-    cmd_vel_msg.linear.y=0;
-    cmd_vel_msg.linear.x=0;
+    setpoint_velocity.Vy=0;
+    setpoint_velocity.Vx=0;
   }
 
   cmd_vel = true;
@@ -182,6 +234,7 @@ void remotecontrolCallBack(geometry_msgs::Twist msg){
 
 void movementCallBack(tcc_msgs::movement_msg msg){
   angle_setpoint = msg.angle;
+
   cmd_vel_msg.linear.x = msg.x_spd*sin((angle_setpoint-90)*PI/180)+ msg.y_spd*cos(angle_setpoint*PI/180);
   cmd_vel_msg.linear.y = msg.y_spd*sin((angle_setpoint)*PI/180)+ msg.x_spd*cos((angle_setpoint-90)*PI/180);
 }
@@ -223,6 +276,16 @@ int main(int argc, char **argv)
   m_spds.m2 = 0;
   m_spds.m3 = 0;
 
+  velocity.x = 0;
+  velocity.y = 0;
+  velocity.w = 0;
+
+  velocity_msg.Vx = 0;
+  velocity_msg.Vy = 0;
+
+  setpoint_velocity.Vx = 0;
+  setpoint_velocity.Vy = 0;
+
   ros::init(argc, argv, "Movement_controller");
   boost::thread thread(loop);
   ros::NodeHandle nh;
@@ -238,6 +301,8 @@ int main(int argc, char **argv)
   nh.getParam("/Movement_controller/DeadzoneSize",dead_zone);
   nh.getParam("/Movement_controller/Angle_Setpoint",angle_setpoint);
   nh.getParam("/Movement_controller/PPM_CONSTANT",PPM_CONSTANT);
+  nh.getParam("/Movement_controller/Acceleration_Ramp",accel_ramp);
+  nh.getParam("/Movement_controller/Deceleration_Ramp",decel_ramp);
   PPM_CONSTANT /= CONTROL_FREQ;
   PID_rotation = new PID(freq,Kp,Ki,Kd,pid_min,pid_max);
 
@@ -262,7 +327,7 @@ int main(int argc, char **argv)
   while(ros::ok())
   {
     cmd_vel_counter++;
-    if(cmd_vel_counter > 50){
+    if(cmd_vel_counter > 25){
       cmd_vel = false;
     }    
 

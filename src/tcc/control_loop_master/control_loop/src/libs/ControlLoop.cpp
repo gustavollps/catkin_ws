@@ -18,17 +18,17 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
 
   M1.position=0;
   M1.setpoint=0;
-  M1.velocity=0;
+  M1.velocity=0;  
   M1.int_counter=0;
 
   M2.position=0;
   M2.setpoint=0;
-  M2.velocity=0;
+  M2.velocity=0;  
   M2.int_counter=0;
 
   M3.position=0;
   M3.setpoint=0;
-  M3.velocity=0;
+  M3.velocity=0;  
   M3.int_counter=0;
 
   int delay = 8;
@@ -50,8 +50,7 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
 
   M1_getParams();
   M2_getParams();
-  M3_getParams();
-  Acceleration_getParams();
+  M3_getParams();  
 
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------
@@ -169,15 +168,12 @@ void ControlLoop::M3_getParams()
   nh_->getParam("/Control_Loop/M3_deadzone",M3_params.Deadzone);
 }
 
-void ControlLoop::Acceleration_getParams()
-{
-  nh_->getParam("/Control_Loop/Acceleration_Ramp",accel_ramp_);
-  nh_->getParam("/Control_Loop/Deceleration_Ramp",decel_ramp_);
-}
-
 void ControlLoop::cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg)
 {
   //3 wheel omnidirectional equations
+  //M1.velsetpoint = PULSE_TO_METER_K*( 0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
+  //M2.velsetpoint = PULSE_TO_METER_K*(-0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
+  //M3.velsetpoint = PULSE_TO_METER_K*(                        - 0.666667*msg->linear.x + 0.333333*msg->angular.z);
 
   M1.velocity = PULSE_TO_METER_K*( 0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
   M2.velocity = PULSE_TO_METER_K*(-0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
@@ -188,6 +184,7 @@ void ControlLoop::cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg)
 
 void ControlLoop::interruptCallback(const tcc_msgs::interrupt_counter::ConstPtr &msg)
 {
+
   //More than 1 sec without cmd_vel msg = STOP
   if(!cmd_vel_){
     cmd_vel_counter_++;

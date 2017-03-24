@@ -38,7 +38,7 @@ class ControlLoop
 
     struct motor_info{
       int32_t int_counter, dint;
-      float velocity , velsetpoint;
+      float velocity;
       float error;
       double position, setpoint;
     };
@@ -81,8 +81,7 @@ class ControlLoop
 
     void M1_getParams();
     void M2_getParams();
-    void M3_getParams();
-    void Acceleration_getParams();
+    void M3_getParams();    
 
     PID *PID_M1_;
     PID *PID_M2_;
@@ -105,10 +104,7 @@ class ControlLoop
 
     float motor1_vel_;
     float motor2_vel_;
-    float motor3_vel_;
-
-    float accel_ramp_;
-    float decel_ramp_;
+    float motor3_vel_;   
 
     int callback_counter_;
     int cmd_vel_counter_;

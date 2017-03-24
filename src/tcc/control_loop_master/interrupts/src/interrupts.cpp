@@ -48,6 +48,8 @@ bool pin6_state;
 bool dir3 = false;
 bool st3 = false;
 
+realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter> *realtime_pub;
+
 void softwareISR(){
   if(pin1_state != digitalRead(M1_I1)){
     pin1_state = !pin1_state;
@@ -173,26 +175,18 @@ bool calibrationCallback(tcc_msgs::CalibrateInt::Request &req, tcc_msgs::Calibra
 }
 
 void loop(){
-  ros::NodeHandle node;    
-  realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter> *realtime_pub
-      = new realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter>(node,"/Interrupts_counter",10);
-  ros::ServiceServer calibration_service = node.advertiseService("/CalibrateInt",calibrationCallback);  
+  ros::spin();
+}
 
-  ros::Rate loop_rate(50);
-  while(ros::ok()){    
-
-    if(realtime_pub->trylock()){
-      realtime_pub->msg_.int1 = counter_int1;
-      realtime_pub->msg_.int2 = counter_int2;
-      realtime_pub->msg_.int3 = counter_int3;
-      //Timestamp for response time monitoring and fail safe (on pwm node)
-      realtime_pub->msg_.timestamp = ros::Time::now();
-      realtime_pub->unlockAndPublish();
-    }
-    ros::spinOnce();
-    loop_rate.sleep();
+void timerCallBack(const ros::TimerEvent &event){
+  if(realtime_pub->trylock()){
+    realtime_pub->msg_.int1 = counter_int1;
+    realtime_pub->msg_.int2 = counter_int2;
+    realtime_pub->msg_.int3 = counter_int3;
+    //Timestamp for response time monitoring and fail safe (on pwm node)
+    realtime_pub->msg_.timestamp = ros::Time::now();
+    realtime_pub->unlockAndPublish();
   }
-
 }
 
 int main(int argc, char **argv)
@@ -200,8 +194,10 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "interrupts");
   int rate = 10000;
   boost::thread thread(loop);
-
+  realtime_pub = new realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter>(node,"/Interrupts_counter",10);
+  ros::ServiceServer calibration_service = node.advertiseService("/CalibrateInt",calibrationCallback);
   ros::NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
+  ros::Timer int_timer = nh->createTimer(ros::Duration(0.02),timerCallBack);
   if(!nh->getParam("/Interrupts/INT_FREQ",int_freq)){
     ROS_ERROR("[INTERRUPTS] Parameters YAML file not loaded");
     ros::shutdown();
