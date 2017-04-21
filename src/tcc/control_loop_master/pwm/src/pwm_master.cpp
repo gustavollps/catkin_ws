@@ -56,6 +56,8 @@ int main(int argc, char **argv)
   ros::Subscriber pwm_sub = nh.subscribe<tcc_msgs::cmd_vel_msg>("/PWM",10,pwmCallback);  
   std::string port("");
   boost::thread pwm_thread(pwm_loop); //ros spin
+  ros::ServiceClient calibration_client = nh.serviceClient<tcc_msgs::CalibrateInt>("/CalibrateInt");
+  tcc_msgs::CalibrateInt srv;
 
   nh.param("port",port,std::string("ttyUSB0"));
   port = "/dev/"+port;
@@ -66,6 +68,9 @@ int main(int argc, char **argv)
     ros::shutdown();
     return 0;
   }
+
+  usleep(3000*1000);
+  calibration_client.call(srv);
 
   struct sysinfo memInfo;
   sysinfo (&memInfo);

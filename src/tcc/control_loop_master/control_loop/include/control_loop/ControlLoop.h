@@ -24,9 +24,10 @@
 //Personal libraries
 #include "PID.h"
 
+#define PI 3.14159265
 //#define DEBUG
 
-#define CONTROL_FREQ 50 
+#define CONTROL_FREQ 50.0
 
 class ControlLoop
 {

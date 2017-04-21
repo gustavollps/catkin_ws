@@ -1,0 +1,3 @@
+point_tolerance: 0.05
+top_speed: 0.5
+cte_speed: 0.3

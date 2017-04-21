@@ -194,16 +194,17 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "interrupts");
   int rate = 10000;
   boost::thread thread(loop);
-  realtime_pub = new realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter>(node,"/Interrupts_counter",10);
-  ros::ServiceServer calibration_service = node.advertiseService("/CalibrateInt",calibrationCallback);
-  ros::NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
-  ros::Timer int_timer = nh->createTimer(ros::Duration(0.02),timerCallBack);
-  if(!nh->getParam("/Interrupts/INT_FREQ",int_freq)){
+  ros::NodeHandle nh;
+  realtime_pub = new realtime_tools::RealtimePublisher<tcc_msgs::interrupt_counter>(nh,"/Interrupts_counter",10);
+  ros::ServiceServer calibration_service = nh.advertiseService("/CalibrateInt",calibrationCallback);
+  ros::Timer int_timer = nh.createTimer(ros::Duration(0.02),timerCallBack);
+
+  if(!nh.getParam("/Interrupts/INT_FREQ",int_freq)){
     ROS_ERROR("[INTERRUPTS] Parameters YAML file not loaded");
     ros::shutdown();
   }
 
-  nh->getParam("/Interrupts/CALIBRATION_TIME",calibration_time);
+  nh.getParam("/Interrupts/CALIBRATION_TIME",calibration_time);
 
   ros::Rate loop(int_freq);
   //ros::Publisher pub = nh->advertise<tcc_msgs::interrupt_counter>("/Interrupts_counter",10);  

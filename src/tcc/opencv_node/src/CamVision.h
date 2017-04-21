@@ -44,6 +44,7 @@ class CamVision{
 		~CamVision();
 
         cv::Mat raw_image_;
+        cv::Mat threshold_;
         
         vector<Object> findObjects( 
                             cv::Mat cameraFeed_, 

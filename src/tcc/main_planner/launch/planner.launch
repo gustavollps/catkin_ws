@@ -1,0 +1,18 @@
+<launch>
+  <node name="Movement_controller" pkg="movement_controller" type="movement_controller">
+    <rosparam file="$(find movement_controller)/config/planner_params.yaml" command="load"/>
+  </node>
+  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="output_frame" value="odom"/>
+    <param name="freq" value="50.0"/>
+    <param name="sensor_timeout" value="0.05"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="true"/>
+    <param name="vo_used" value="false"/>
+    <param name="debug" value="false"/>
+    <param name="self_diagnose" value="false"/>
+  </node>
+  <node name="Main_Planner" pkg="main_planner" type="main_planner" output="screen">
+    <rosparam file="$(find main_planner)/config/planner_params.yaml" command="load"/>
+  </node>
+</launch>

@@ -9,7 +9,7 @@ namespace service_manager
 int param_dilate = 10;
 int param_erode = 10;
 int param_gaussian = 10;
-int camera = 0;
+int camera = 1;
 cv::Scalar param_top_boundarie(255,255,255),param_bottom_boundarie(0,0,0);
 
 void getParams(){

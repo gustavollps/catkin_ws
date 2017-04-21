@@ -56,20 +56,20 @@ vector<Object> CamVision::findObjects(
 	vector< vector<cv::Point> > contours;
 	vector<Vec4i> hierarchy;
 
-	cv::Mat threshold;
 
-	cameraFeed.copyTo(threshold);
 
-	CamVision::gaussianFilter(threshold);
+  cameraFeed.copyTo(threshold_);
 
-	inRange(threshold,bottom_boundarie,top_boundarie,threshold);
+  CamVision::gaussianFilter(threshold_);
 
-	CamVision::filterMat(threshold);
+  inRange(threshold_,bottom_boundarie,top_boundarie,threshold_);
 
-	//cv::imshow("Image_filtered",threshold);    
-	//cv::waitKey(1);
+  CamVision::filterMat(threshold_);
 
-	cv::findContours(threshold,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );
+  cv::imshow("Image_filtered",threshold_);
+  cv::waitKey(1);
+
+  cv::findContours(threshold_,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );
 
 	if (hierarchy.size() > 0) {
 		int numObjects = hierarchy.size();

@@ -36,8 +36,10 @@ void AStarNode::goalCallback(tcc_msgs::location_goal msg)
 
   Point start(msg.start.x,msg.start.y);
   Point goal(msg.goal.x,msg.goal.y);
+  nav_msgs::OccupancyGrid map;
 
-  pathRouter_ = new LibAstar(goal,start);
+
+  pathRouter_ = new LibAstar(goal,start,map, 10, 10);
 
   std_msgs::String route;
   route.data = pathRouter_->pathFinder();
