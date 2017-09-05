@@ -5,4 +5,6 @@ DeadzoneSize: 2
 Angle_Setpoint: 0
 PPM_CONSTANT: 0.391066
 Acceleration_Ramp: 0.01
-Deceleration_Ramp: 0.02
+Deceleration_Ramp: 0.1
+InitialPoseX: 0.2
+InitialPoseY: 0.2

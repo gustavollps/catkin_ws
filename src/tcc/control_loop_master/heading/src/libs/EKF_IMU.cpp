@@ -63,7 +63,13 @@ EKF_IMU::EKF_IMU(ros::NodeHandle* nh)
 
   publish_now_ = false;
 
+  wiringPiSetup();
+
   imu_pub_ = nh_->advertise<sensor_msgs::Imu>("/imu_data", 10);
+  battery_level_ = nh_->advertise<std_msgs::Float32>("/battery_level",1);
+  input_level_ = nh_->advertise<std_msgs::Float32>("/input_level",1);
+
+  levels_timer_ = nh_->createTimer(ros::Duration(1), &EKF_IMU::levels_timerCallBack, this);
   gyro_timer_ =
       nh_->createTimer(ros::Duration(0.01), &EKF_IMU::timerCallBack, this);  
   zeroAngle_server_ =
@@ -115,6 +121,15 @@ void EKF_IMU::timerCallBack(const ros::TimerEvent& event)
   {
     publish_now_ = true;
   }
+}
+
+void EKF_IMU::levels_timerCallBack(const ros::TimerEvent &event)
+{
+  std_msgs::Float32 msg;
+  msg.data = analogRead(0)*1.8/1024*11;
+  battery_level_.publish(msg);
+  msg.data = analogRead(1)*1.8/1024*11;
+  input_level_.publish(msg);
 }
 /*
 

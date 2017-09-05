@@ -20,13 +20,15 @@ public:
   void setTolerance(float dist_meters);
   void updatePose(Point2D pose);
   bool hasRoute();
+
+  std::vector<Point2D> route_points_;
+
 private:
   Point2D goal_;
   Point2D pose_;
   Point2D route_pose_;
 
   std::string route_;
-  std::vector<Point2D> route_points_;
 
   int32_t route_size_;
   int32_t route_index_;

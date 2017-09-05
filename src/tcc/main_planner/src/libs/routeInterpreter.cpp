@@ -30,51 +30,70 @@ bool routeInterpreter::loadNewRoute(std::string Route, Point2D pose)
   pose_ = pose;
   route_index_ = 0;
   route_points_.clear();
+
+  //route_points_.push_back(pose);
+
+  char current_dir ='z';
+  char previous_dir;
+
   while (1)
-  {
-    route_points_.push_back(pose);
+  {    
+
     if (route_index_ < route_.size() && !end)
     {
-      switch (route_.at(route_index_))
+      previous_dir = current_dir;
+      current_dir = route_.at(route_index_);
+      if(current_dir != previous_dir){
+        route_points_.push_back(pose_);
+      }
+      switch (current_dir)
       {
       case 'a': // Upper Left
-        pose.x -= map_resolution_;
-        pose.y += map_resolution_;
+        pose_.x -= map_resolution_;
+        pose_.y += map_resolution_;
         break;
       case 'b': // Up
-        pose.y += map_resolution_;
+        pose_.y += map_resolution_;
         break;
       case 'c': // Upper right
-        pose.x += map_resolution_;
-        pose.y += map_resolution_;
+        pose_.x += map_resolution_;
+        pose_.y += map_resolution_;
         break;
       case 'd': // Left
-        pose.x -= map_resolution_;
+        pose_.x -= map_resolution_;
         break;
       case 'e': // Right
-        pose.x += map_resolution_;
+        pose_.x += map_resolution_;
         break;
       case 'f': // Lower left
-        pose.x -= map_resolution_;
-        pose.y -= map_resolution_;
+        pose_.x -= map_resolution_;
+        pose_.y -= map_resolution_;
         break;
       case 'g': // Down
-        pose.y -= map_resolution_;
+        pose_.y -= map_resolution_;
         break;
       case 'h': // Lower right
-        pose.x += map_resolution_;
-        pose.y -= map_resolution_;
+        pose_.x += map_resolution_;
+        pose_.y -= map_resolution_;
         break;
       default: // default (end of route)
         end = true;
         break;
       }
+
+      if(route_index_ == route_.size()-1){ //End point of the route
+        route_points_.push_back(pose_);
+      }
+
       route_index_++;
     }
     else
     {
       break;
     }
+
+
+
   }
 
   route_index_ = 0;
@@ -87,6 +106,9 @@ bool routeInterpreter::loadNewRoute(std::string Route, Point2D pose)
   else
   {
     has_route_ = true;
+    for(int i=0;i<route_points_.size();i++){
+      std::cout << route_points_.at(i).x << " - " << route_points_.at(i).y << std::endl;
+    }
     return true;
   }
 }
@@ -107,7 +129,7 @@ Point2D routeInterpreter::nextGoal(Point2D pose)
 {
   pose_ = pose;
   Point2D next_goal = pose;
-  // std::cout << "Next Goal" << std::endl;
+  // std::cout << "Next Goal" << std::endl;  
   for (int i = route_index_ + 1; i < route_points_.size() - 1; i++)
   {
     float dx = route_points_.at(i).x - pose_.x;

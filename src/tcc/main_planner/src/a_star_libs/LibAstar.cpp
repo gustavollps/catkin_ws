@@ -1,8 +1,8 @@
 #include "../../include/a_star/LibAstar.h"
 
 LibAstar::LibAstar(Point& goal, Point& start, nav_msgs::OccupancyGrid themap,
-                   int WIDTH, int HEIGHT)
-    : goal_{goal}, start_{start}
+                   int WIDTH, int HEIGHT, int mode)
+    : goal_{goal}, start_{start}, MODE_{mode}
 {
   MATRIX_HEIGHT = HEIGHT;
   MATRIX_WIDTH = WIDTH;
@@ -56,7 +56,7 @@ LibAstar::~LibAstar()
 
 std::string LibAstar::pathFinder()
 {
-  GraphNode* node = new GraphNode(MANHATTAN, goal_, start_, start_, 0);
+  GraphNode* node = new GraphNode(MODE_, goal_, start_, start_, 0);
 
   node->G_ = 0;
   node->F_ = node->H_;
@@ -125,8 +125,8 @@ std::string LibAstar::pathFinder()
           if (!(i == 0 && j == 0))
           {
             // child node
-            GraphNode* temp_node = new GraphNode(
-                MANHATTAN, goal_, actual_position, node->position_, node->G_);
+            GraphNode* temp_node = new GraphNode(MODE_, goal_, actual_position,
+                                                 node->position_, node->G_);
 
 #ifdef DEBUG
             std::cout << "Neighbors search: " << temp_node[0] << std::endl;
@@ -239,7 +239,7 @@ std::string LibAstar::pathFinder()
 
     Point temp_point = node->position_;
     delete node;
-    node = new GraphNode(MANHATTAN, goal_, open_list[0].top().position_,
+    node = new GraphNode(MODE_, goal_, open_list[0].top().position_,
                          open_list[0].top().father_, open_list[0].top().G_);
 
 #ifdef DEBUG
@@ -343,7 +343,7 @@ std::string LibAstar::pathFinder()
               << std::endl;
     getchar();
 #endif
-    printMap();
+    // printMap();
     return route;
   }
 }

@@ -6,6 +6,7 @@
 #include "tcc_msgs/CalibrateInt.h"
 #include "tcc_msgs/ZeroAngle.h"
 #include <tf/transform_datatypes.h>
+#include <std_msgs/Float32.h>
 
 #define PI 3.14159265
 #define N_SAMPLES 2000
@@ -20,10 +21,15 @@ private:
   MPU mpu_;
   ros::NodeHandle* nh_;
   ros::Publisher imu_pub_;
+  ros::Publisher battery_level_;
+  ros::Publisher input_level_;
   ros::Timer gyro_timer_;
+  ros::Timer levels_timer_;
   ros::ServiceServer zeroAngle_server_;
 
+
   void timerCallBack(const ros::TimerEvent& event);
+  void levels_timerCallBack(const ros::TimerEvent &event);
   bool zeroangleCallBack(tcc_msgs::ZeroAngle::Request& req,
                          tcc_msgs::ZeroAngle::Response& res);
 

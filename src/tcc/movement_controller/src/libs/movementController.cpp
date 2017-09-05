@@ -32,8 +32,6 @@ movementController::movementController(ros::NodeHandle* nh)
   pose_.y = 0;
   d_pose_.x = 0;
   d_pose_.y = 0;
-  last_pose_.x = 0;
-  last_pose_.y = 0;
 
   new_int_.m1_counter = 0;
   new_int_.m2_counter = 0;
@@ -77,6 +75,9 @@ movementController::movementController(ros::NodeHandle* nh)
   odom_msg_ekf_.pose.covariance[35] = 0.01;
 
   getParams();
+
+  last_pose_.x = pose_.x;
+  last_pose_.y = pose_.y;
 
   PID_rotation_ = new PID(freq_, Kp_, Ki_, Kd_, pid_min_, pid_max_);
 
@@ -246,6 +247,13 @@ void movementController::controltimerCallBack(const ros::TimerEvent& event)
     cmd_vel_msg_.linear.y = 0;
     cmd_vel_pub_.publish(cmd_vel_msg_);
   }
+
+  static ros::Publisher temp_vel_pub = nh_->advertise<geometry_msgs::Twist>("/velocity_debug",1);
+  geometry_msgs::Twist vel_msg;
+  vel_msg.linear.x  = velocity_.x*50;
+  vel_msg.linear.y  = velocity_.y*50;
+  temp_vel_pub.publish(vel_msg);
+
 }
 
 /**
@@ -272,18 +280,18 @@ void movementController::intCallBack(tcc_msgs::interrupt_counter msg)
 
   // Current local velocity
   velocity_.y =
-      PULSE_PER_METER_ * (0.577350 * m_spds_.m1 - 0.577350 * m_spds_.m2);
+      Ky_ * PULSE_PER_METER_ * (0.577350 * m_spds_.m1 - 0.577350 * m_spds_.m2);
   velocity_.x =
-      PULSE_PER_METER_ *
+      Kx_ * PULSE_PER_METER_ *
       (0.333333 * m_spds_.m1 + 0.333333 * m_spds_.m2 - 0.666667 * m_spds_.m3);
   velocity_.w = PULSE_PER_METER_ *
-                (0.14 * m_spds_.m1 + 0.14 * m_spds_.m2 + 0.14 * m_spds_.m3);
+                (0.14 * m_spds_.m1 + 0.14 * m_spds_.m2 + 0.14 * m_spds_.m3);    
 
   // CURRENT GLOBAL POSE
   pose_.y += (cos(angle_ * PI / 180) * velocity_.y +
-                                 sin((angle_) * PI / 180) * velocity_.x);
+              sin((angle_)*PI / 180) * velocity_.x);
   pose_.x += (-sin(angle_ * PI / 180) * velocity_.y +
-                                 cos((angle_) * PI / 180) * velocity_.x);
+              cos((angle_)*PI / 180) * velocity_.x);
 
   d_pose_.y = pose_.y - last_pose_.y;
   d_pose_.x = pose_.x - last_pose_.x;
@@ -452,6 +460,12 @@ void movementController::getParams()
   // nh.getParam("/Movement_controller/PPM_CONSTANT",PULSE_PER_METER);
   nh_->getParam("/Movement_controller/Acceleration_Ramp", accel_ramp_);
   nh_->getParam("/Movement_controller/Deceleration_Ramp", decel_ramp_);
+
+  nh_->getParam("/Movement_controller/InitialPoseX", pose_.x);
+  nh_->getParam("/Movement_controller/InitialPoseY", pose_.y);
+
+  nh_->getParam("/Movement_controller/Xgain", Kx_);
+  nh_->getParam("/Movement_controller/Ygain", Ky_);
 }
 
 /**

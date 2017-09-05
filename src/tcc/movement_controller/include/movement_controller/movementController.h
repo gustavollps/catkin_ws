@@ -99,6 +99,7 @@ private:
   ros::Subscriber int_sub_;
   ros::Subscriber remote_control_sub_;
   ros::Subscriber movement_sub_;
+  ros::Subscriber point_sub_;
   ros::Timer control_timer_;
   ros::Timer odom_ekf_timer_;
   ros::ServiceServer pid_change_server_;
@@ -123,6 +124,8 @@ private:
   void getParams();
 
   double PULSE_PER_METER_;
+  float Kx_;
+  float Ky_;
 
   float angle_, last_angle_;
   float angle_setpoint_;

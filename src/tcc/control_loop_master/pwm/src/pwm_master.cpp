@@ -5,6 +5,7 @@
 #include <tcc_msgs/CalibrateInt.h>
 #include "../include/pwm/Serial.h"
 #include <boost/thread/thread.hpp>
+#include <std_srvs/Empty.h>
 
 uchar duty_cycle_1=127;
 uchar duty_cycle_2=127;
@@ -12,6 +13,9 @@ uchar duty_cycle_3=127;
 int fd;
 ros::Time timestamp;
 float physMemUsed;
+
+bool motors_enabled=true;
+
 
 void generatePWM(){
   uchar *data = new uchar[1];
@@ -25,10 +29,16 @@ void generatePWM(){
 }
 
 void pwmCallback(tcc_msgs::cmd_vel_msg msg){
-  duty_cycle_1 = msg.pwm1;
-  duty_cycle_2 = msg.pwm2;
-  duty_cycle_3 = msg.pwm3;
-
+  if(motors_enabled){
+    duty_cycle_1 = msg.pwm1;
+    duty_cycle_2 = msg.pwm2;
+    duty_cycle_3 = msg.pwm3;
+  }
+  else{
+    duty_cycle_1 = 127;
+    duty_cycle_2 = 127;
+    duty_cycle_3 = 127;
+  }
   generatePWM();
 
   //Keep last message's timestamp to fail safe
@@ -48,15 +58,33 @@ void pwm_loop(){
   ros::spin();
 }
 
+bool disable_motors(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+  motors_enabled = false;
+}
+
+bool enable_motors(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+  motors_enabled = true;
+}
+
+
 int main(int argc, char **argv)
 {
   // Set up ROS.
   ros::init(argc, argv, "PWM");
+
   ros::NodeHandle nh;
-  ros::Subscriber pwm_sub = nh.subscribe<tcc_msgs::cmd_vel_msg>("/PWM",10,pwmCallback);  
+
+  ros::Subscriber pwm_sub = nh.subscribe<tcc_msgs::cmd_vel_msg>("/PWM",10,pwmCallback);
+
   std::string port("");
+
   boost::thread pwm_thread(pwm_loop); //ros spin
+
   ros::ServiceClient calibration_client = nh.serviceClient<tcc_msgs::CalibrateInt>("/CalibrateInt");
+
+  ros::ServiceServer motor_srv_client_off = nh.advertiseService("/Disable_motors",disable_motors);
+  ros::ServiceServer motor_srv_client_on = nh.advertiseService("/Enable_motors",enable_motors);
+
   tcc_msgs::CalibrateInt srv;
 
   nh.param("port",port,std::string("ttyUSB0"));
@@ -69,7 +97,7 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  usleep(3000*1000);
+  //usleep(2000*1000);
   calibration_client.call(srv);
 
   struct sysinfo memInfo;
@@ -82,7 +110,7 @@ int main(int argc, char **argv)
   bool error = false;
   while(ros::ok())
   {
-    //Failsafe time = 100ms (cycle = 50ms)
+    //Failsafe time = 100ms (cycle = 20ms)
     dt = ros::Time::now() - timestamp;
     physMemUsed = (float(memInfo.totalram - memInfo.freeram))/float(memInfo.totalram)*100;
     if(dt.toSec()>0.1)

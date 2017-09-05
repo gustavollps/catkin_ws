@@ -12,18 +12,18 @@ class GraphNode{
 	public:		    
     Point position_;
 
-    GraphNode(int type, Point goal, Point position, Point father,unsigned int length);
+    GraphNode(int type, Point goal, Point position, Point father,float length);
     ~GraphNode();
 
     void setH(int type);
-    void setG(unsigned int lenght);
+    void setG(float lenght);
 
     void setFather(Point father);
     bool operator<(const GraphNode & a) const;
 
-    unsigned int F_;
-    unsigned int G_;
-    unsigned int H_;
+    float F_;
+    float G_;
+    float H_;
 
     friend std::ostream& operator<<(std::ostream& os, const GraphNode& node);
 
@@ -31,7 +31,7 @@ class GraphNode{
   private:
 
 
-    unsigned int lenght_;
+    float lenght_;
 
     Point goal_;   
 

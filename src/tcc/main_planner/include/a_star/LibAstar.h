@@ -23,7 +23,7 @@ class LibAstar
 
 public:
   LibAstar(Point& goal, Point& start, nav_msgs::OccupancyGrid the_map,
-           int width, int height);
+           int width, int height, int mode);
   ~LibAstar();
 
   std::string pathFinder();
@@ -33,8 +33,8 @@ public:
   std::priority_queue<GraphNode> open_list[2];
 
   std::vector<std::vector<bool> > map_;
-  std::vector<std::vector<unsigned int> > opened_list;
-  std::vector<std::vector<unsigned int> > closed_list;
+  std::vector<std::vector<float> > opened_list;
+  std::vector<std::vector<float> > closed_list;
   std::vector<std::vector<char> > dir_map;
 
   /*
@@ -59,6 +59,7 @@ private:
 
   int MATRIX_HEIGHT;
   int MATRIX_WIDTH;
+  int MODE_;
 };
 
 #endif

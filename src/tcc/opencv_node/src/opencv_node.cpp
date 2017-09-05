@@ -52,6 +52,7 @@ int main(int argc, char **argv)
                                     "bgr8", 
                                     img_processor.threshold_).toImageMsg();
         
+        service_manager::getParams();
         pub.publish(msg);
         
         ros::spinOnce();    
