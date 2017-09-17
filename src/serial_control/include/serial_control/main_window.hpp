@@ -13,8 +13,13 @@
 *****************************************************************************/
 
 #include <QtGui/QMainWindow>
+
+#ifndef Q_MOC_RUN
+
 #include "ui_main_window.h"
 #include "qnode.hpp"
+
+#endif
 
 /*****************************************************************************
 ** Namespace

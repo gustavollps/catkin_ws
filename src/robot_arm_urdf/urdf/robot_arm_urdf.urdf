@@ -1,0 +1,268 @@
+<robot
+  name="robot_arm_urdf">
+  <link
+    name="base_link">    
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/base.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/base.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="art_1">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_1.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0.6 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_1.stl" />
+      </geometry>
+    </collision>
+  </link>  
+  <joint
+    name="art_1"
+    type="continuous">
+    <origin
+      xyz="0 0 0.23"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="art_1" />
+    <axis
+      xyz="0 1 0" />
+  </joint>  
+  <link
+    name="art_2">
+    <visual>
+      <origin
+        xyz="0 0 -0.075"
+        rpy="1.57 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_2.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 0.6 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="art_2"
+    type="revolute">
+    <origin
+      xyz="0 0 0.13"
+      rpy="1.57 0 0" />
+    <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+    <parent
+      link="art_1" />
+    <child
+      link="art_2" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="art_3">
+    <visual>
+      <origin
+        xyz="0 0 -0.1"
+        rpy="1.57 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_3.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.6 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_3.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="art_3"
+    type="revolute">
+    <origin
+      xyz="0 0.5 0"
+      rpy="0 0 0" />
+    <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+    <parent
+      link="art_2" />
+    <child
+      link="art_3" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="art_4">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_4.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0.6 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_4.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="art_4"
+    type="revolute">
+    <origin
+      xyz="0 0.3 0"
+      rpy="0 0 0" />
+    <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+    <parent
+      link="art_3" />
+    <child
+      link="art_4" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="art_5">
+    <visual>
+      <origin
+        xyz="-0.075 0 0"
+        rpy="1.57 1.57 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_5.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0.6 0.6 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_5.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="art_5"
+    type="revolute">
+    <origin
+      xyz="0 0.36 0"
+      rpy="0 0 0" />
+    <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+    <parent
+      link="art_4" />
+    <child
+      link="art_5" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="art_6">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_6.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.6 0.6 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_arm_urdf/meshes/art_6.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="art_6"
+    type="revolute">
+    <origin
+      xyz="0 0.18 0"
+      rpy="0 0 0" />
+    <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+    <parent
+      link="art_5" />
+    <child
+      link="art_6" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+</robot>

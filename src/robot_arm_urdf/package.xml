@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>robot_arm_urdf</name>
+  <version>0.0.0</version>
+  <description>The robot_arm_urdf package</description>
+
+  <maintainer email="tony@todo.todo">tony</maintainer>
+  
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+
+  </export>
+</package>

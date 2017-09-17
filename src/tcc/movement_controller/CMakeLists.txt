@@ -23,6 +23,10 @@ include_directories(
   ${PID_INCLUDE_DIRS}
 )
 
+set(CPP_FILES
+    src/libs/movementController.cpp
+    )
+
 add_executable(movement_controller src/movement_controller.cpp ${CPP_FILES})
 add_dependencies(movement_controller tcc_msgs PID ${catkin_EXPORTED_TARGETS})
 target_link_libraries(movement_controller ${catkin_LIBRARIES} ${PID_LIBRARIES})

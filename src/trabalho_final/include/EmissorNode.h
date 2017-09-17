@@ -42,9 +42,6 @@ class EmissorNode : public Node
 {
 public:
   EmissorNode(ros::NodeHandle *nh);
-  bool changeGoal(trabalho_final::ChangeGoal::Request& req,
-           trabalho_final::ChangeGoal::Response& res);
-
   virtual ~EmissorNode();
 
 private:
@@ -52,6 +49,8 @@ private:
   void pidtimerCallback(const ros::TimerEvent& event);
   void sonarCallback(const sensor_msgs::PointCloud::ConstPtr& sonar_msg);
   void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_msg);
+  bool changeGoal(trabalho_final::ChangeGoal::Request& req,
+           trabalho_final::ChangeGoal::Response& res);
 
   ros::Timer timer_;
   ros::Timer pid_timer_;

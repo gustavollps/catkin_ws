@@ -43,7 +43,8 @@ ControlLoop::ControlLoop(ros::NodeHandle *nh, float freq)
   //Parameters settings ------------------------------------------------------------------
   //--------------------------------------------------------------------------------------
   nh_->getParam("/Control_Loop/ENCODER_PULSE_PER_METER",ENCODER_PULSE_PER_METER);
-  PULSE_TO_METER_K = ENCODER_PULSE_PER_METER/CONTROL_FREQ;
+  float radius = 0.035;
+  PULSE_TO_METER_K = 341.2*4.0/(2.0*PI*radius)/CONTROL_FREQ;
 
   controller_ = 1;
   nh_->getParam("/Control_Loop/Velocity_Controller",controller_);
@@ -170,14 +171,13 @@ void ControlLoop::M3_getParams()
 
 void ControlLoop::cmd_velCallback(const geometry_msgs::Twist::ConstPtr &msg)
 {
-  //3 wheel omnidirectional equations
-  //M1.velsetpoint = PULSE_TO_METER_K*( 0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
-  //M2.velsetpoint = PULSE_TO_METER_K*(-0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
-  //M3.velsetpoint = PULSE_TO_METER_K*(                        - 0.666667*msg->linear.x + 0.333333*msg->angular.z);
-
-  M1.velocity = PULSE_TO_METER_K*( 0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
-  M2.velocity = PULSE_TO_METER_K*(-0.577350*msg->linear.y + 0.333333*msg->linear.x + 0.333333*msg->angular.z);
-  M3.velocity = PULSE_TO_METER_K*(                        - 0.666667*msg->linear.x + 0.333333*msg->angular.z);
+  //3 wheel omnidirectional equations      
+//  M1.velocity = msg->linear.x*PULSE_TO_METER_K;
+//  M2.velocity = msg->linear.y*PULSE_TO_METER_K;
+//  M3.velocity = msg->linear.z*PULSE_TO_METER_K;
+  M1.velocity = PULSE_TO_METER_K*( 0.866025*msg->linear.y + 0.500000*msg->linear.x + 0.333333*msg->angular.z);
+  M2.velocity = PULSE_TO_METER_K*(-0.866025*msg->linear.y + 0.500000*msg->linear.x + 0.333333*msg->angular.z);
+  M3.velocity = PULSE_TO_METER_K*(                        - 1.000000*msg->linear.x + 0.333333*msg->angular.z);
   ROS_WARN("New velocity: \nM1: %f \nM2: %f \nM3: %f",M1.velocity,M2.velocity,M3.velocity);
   cmd_vel_ = true;
 }

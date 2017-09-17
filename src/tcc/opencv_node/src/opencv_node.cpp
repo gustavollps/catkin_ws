@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
     service_manager::getParams(); 
 
-    image_processing::CamVision img_processor(service_manager::camera);
+    image_processing::CamVision img_processor(1);
 
     
 
@@ -50,8 +50,9 @@ int main(int argc, char **argv)
         sensor_msgs::ImagePtr msg = cv_bridge::CvImage(
                                     std_msgs::Header(), 
                                     "bgr8", 
-                                    img_processor.raw_image_).toImageMsg();
+                                    img_processor.threshold_).toImageMsg();
         
+        service_manager::getParams();
         pub.publish(msg);
         
         ros::spinOnce();    

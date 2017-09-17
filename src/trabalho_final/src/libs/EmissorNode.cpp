@@ -225,7 +225,7 @@ void EmissorNode::poseCallback(const nav_msgs::Odometry::ConstPtr& pose_msg)
   location_.y = pose_msg->pose.pose.position.y;
   //ROS_INFO("X: %f \t Y: %f",location_.x,location_.y);
   old_angle_ = angle_;
-  angle_ = tf::getYaw(pose_msg->pose.pose.orientation)*180.0/PI;  
+  angle_ = tf::getYaw(pose_msg->pose.pose.orientation)*180.0/PI;
 }
 
 }
